@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Geist, Bricolage_Grotesque } from "next/font/google";
+import { Geist, DM_Serif_Display } from "next/font/google";
 import "./globals.css";
 import { Navigation } from "@/components/Navigation";
 
@@ -8,10 +8,10 @@ const geist = Geist({
   subsets: ["latin"],
 });
 
-const bricolage = Bricolage_Grotesque({
+const dmSerif = DM_Serif_Display({
   variable: "--font-display",
   subsets: ["latin"],
-  weight: ["300", "700", "800"],
+  weight: "400",
 });
 
 export const metadata: Metadata = {
@@ -25,7 +25,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="pt-BR" className={`${geist.variable} ${bricolage.variable} antialiased`}>
+    <html lang="pt-BR" className={`${geist.variable} ${dmSerif.variable} antialiased`}>
       <body>
         <Navigation />
         {children}
