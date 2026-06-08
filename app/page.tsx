@@ -1,112 +1,178 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect } from "react";
+import gsap from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
 
 const frames = [
-  { id: "abertura",      label: "01", title: "Design não decora. Design decide.",                          bg: "#0D0D0D", text: "#F5F0E8" },
-  { id: "provocacao",    label: "02", title: "A maioria dos designers entrega telas. Eu entrego negócios.", bg: "#E07B5A", text: "#0D0D0D" },
-  { id: "identidade",    label: "03", title: "Nome + arquétipo. Minha trajetória →",                       bg: "#5A7BE0", text: "#0D0D0D" },
-  { id: "prova",         label: "04", title: "Cases: Remessa Online / Bipa / Foodastic",                   bg: "#5ABA8A", text: "#0D0D0D" },
-  { id: "metodo",        label: "05", title: "Clareza. Velocidade. Impacto.",                              bg: "#C8A96E", text: "#0D0D0D" },
-  { id: "credibilidade", label: "06", title: "20+ anos / 2 exits / métricas reais.",                       bg: "#B05AB5", text: "#0D0D0D" },
-  { id: "desfecho",      label: "07", title: "Você está construindo algo que importa?",                    bg: "#E8C547", text: "#0D0D0D" },
+  { id: "abertura",      label: "01", title: "Design doesn't decorate. Design decides.",      sub: "A belief, not a tagline.",            bg: "#000", text: "#fff" },
+  { id: "provocacao",    label: "02", title: "Most designers ship screens. I ship businesses.", sub: "20+ years of proof.",                bg: "#fff", text: "#000" },
+  { id: "identidade",    label: "03", title: "Two decades. Two exits. One craft.",             sub: "Design as a multiplier.",             bg: "#000", text: "#fff" },
+  { id: "prova",         label: "04", title: "Remessa Online. Bipa. Betterfly.",               sub: "From seed to scale.",                 bg: "#fff", text: "#000" },
+  { id: "metodo",        label: "05", title: "Clarity. Velocity. Impact.",                     sub: "How I work, every time.",             bg: "#000", text: "#fff" },
+  { id: "credibilidade", label: "06", title: "$229M exit. 4M users. One designer.",            sub: "Results, not résumé.",                bg: "#fff", text: "#000" },
+  { id: "desfecho",      label: "07", title: "Are you building something that matters?",       sub: "Let's talk.",                         bg: "#000", text: "#fff" },
 ];
 
-// CSS Scroll-Driven Animations — roda no compositor thread (iOS 18+, Chrome 115+)
-const scrollCSS = `
-  @supports (animation-timeline: scroll()) {
-    [id^="overlay-"] {
-      animation-name: fadeToBlack;
-      animation-duration: auto;
-      animation-timing-function: linear;
-      animation-fill-mode: both;
-      animation-timeline: scroll(root block);
-    }
-    ${frames.slice(0, -1).map((_, i) => `
-      #overlay-${i} {
-        animation-range-start: calc(${i} * var(--frame-h, 100dvh));
-        animation-range-end: calc(${i} * var(--frame-h, 100dvh) + var(--frame-h, 100dvh) * 0.6);
-      }
-    `).join("")}
-  }
-`;
 
 export default function Home() {
-  const overlaysRef = useRef<HTMLDivElement[]>([]);
-
   useEffect(() => {
-    const vh = window.innerHeight;
-    document.documentElement.style.setProperty("--frame-h", `${vh}px`);
+    gsap.registerPlugin(ScrollTrigger);
 
-    // RAF fallback para browsers sem scroll-driven animations (iOS < 18)
-    if (CSS.supports("animation-timeline", "scroll()")) return;
+    // Altura real do frame — 100dvh pode diferir de window.innerHeight em mobile
+    const firstFrame = document.getElementById(frames[0].id);
+    const fh = firstFrame?.offsetHeight || window.innerHeight;
+    document.documentElement.style.setProperty("--frame-h", `${fh}px`);
 
-    let raf: number;
-    const update = () => {
-      const sy = window.scrollY;
-      for (let i = 0; i < frames.length - 1; i++) {
-        const el = overlaysRef.current[i];
-        if (!el) continue;
-        const start = i * vh;
-        const end = start + vh * 0.6;
-        el.style.opacity = String(Math.max(0, Math.min(1, (sy - start) / (end - start))));
+    frames.forEach((_, i) => {
+      const frameEl = document.getElementById(frames[i].id);
+      if (!frameEl) return;
+
+      const textBlock = frameEl.querySelector<HTMLElement>(".frame-text");
+      const words = frameEl.querySelectorAll<HTMLElement>(".word");
+      const frameStart = i * fh;
+
+      // Parallax invertido: texto deriva para baixo (+40px), afastando do frame que sobe
+      if (textBlock) {
+        gsap.fromTo(textBlock,
+          { y: 0 },
+          {
+            y: 40,
+            ease: "none",
+            scrollTrigger: { start: frameStart, end: frameStart + fh, scrub: 1 },
+          }
+        );
       }
-      raf = requestAnimationFrame(update);
+
+      if (!words.length) return;
+
+      const sub = frameEl.querySelector<HTMLElement>(".frame-sub");
+      const wordDelay = words.length * 0.09 + 0.15;
+
+      // Frame 0: dispara direto no mount
+      if (i === 0) {
+        gsap.fromTo(words,
+          { opacity: 0, y: 40, scale: 0.96 },
+          { opacity: 1, y: 0, scale: 1, stagger: 0.09, duration: 1.0, ease: "power3.out" }
+        );
+        if (sub) gsap.fromTo(sub, { opacity: 0, y: 16 },
+          { opacity: 0.5, y: 0, duration: 0.7, ease: "power3.out", delay: wordDelay }
+        );
+        return;
+      }
+
+      // Frames 1-6
+      gsap.fromTo(words,
+        { opacity: 0, y: 40, scale: 0.96 },
+        {
+          opacity: 1, y: 0, scale: 1, stagger: 0.09, duration: 1.0, ease: "power3.out",
+          scrollTrigger: { start: frameStart - 120, end: frameStart + fh * 0.25, toggleActions: "play none none none" },
+        }
+      );
+      if (sub) gsap.fromTo(sub, { opacity: 0, y: 16 },
+        {
+          opacity: 0.5, y: 0, duration: 0.7, ease: "power3.out", delay: wordDelay,
+          scrollTrigger: { start: frameStart - 120, end: frameStart + fh * 0.25, toggleActions: "play none none none" },
+        }
+      );
+    });
+
+    return () => {
+      ScrollTrigger.getAll().forEach((t) => t.kill());
     };
-    raf = requestAnimationFrame(update);
-    return () => cancelAnimationFrame(raf);
   }, []);
 
   return (
-    <main>
-      <style dangerouslySetInnerHTML={{ __html: scrollCSS }} />
-
+    <main style={{ overflowX: "hidden" }}>
       {frames.map((frame, i) => (
         <div
           key={frame.id}
           id={frame.id}
-          className="relative flex flex-col items-center justify-center px-8"
           style={{
             position: "sticky",
             top: 0,
             height: "100dvh",
             background: frame.bg,
             zIndex: i + 1,
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "flex-start",
+            paddingLeft: "clamp(1.5rem, 6vw, 6rem)",
           }}
         >
-          {i < frames.length - 1 && (
-            <div
-              id={`overlay-${i}`}
-              ref={(el) => { if (el) overlaysRef.current[i] = el; }}
-              style={{
-                position: "absolute",
-                inset: 0,
-                backgroundColor: "#000",
-                pointerEvents: "none",
-                zIndex: 1,
-              }}
-            />
-          )}
-
-          <span
-            className="relative z-10 text-sm tracking-widest mb-6"
-            style={{ color: frame.text, opacity: 0.4 }}
-          >
-            [{frame.label}]
-          </span>
-          <h2
-            className="relative z-10 text-center max-w-2xl"
+          {/* text block — camada de parallax */}
+          <div
+            className="frame-text"
             style={{
-              fontFamily: "var(--font-display)",
-              fontSize: "clamp(1.5rem, 4vw, 3rem)",
-              fontWeight: 400,
-              color: frame.text,
-              letterSpacing: "-0.02em",
-              lineHeight: 0.95,
+              position: "relative",
+              zIndex: 10,
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "flex-start",
+              width: "100%",
+              maxWidth: "80ch",
+              boxSizing: "border-box",
+              willChange: "transform",
             }}
           >
-            {frame.title}
-          </h2>
+            <span
+              className="frame-label"
+              style={{
+                fontFamily: "var(--font-sans)",
+                fontSize: "var(--text-caption)",
+                letterSpacing: "0.15em",
+                textTransform: "uppercase",
+                color: frame.text,
+                marginBottom: "1.5rem",
+                display: "block",
+              }}
+            >
+              {frame.label}
+            </span>
+
+            <h2
+              style={{
+                fontFamily: "var(--font-display)",
+                fontSize: "var(--text-display)",
+                lineHeight: "var(--text-display--line-height)",
+                fontWeight: 400,
+                color: frame.text,
+                letterSpacing: "-0.01em",
+                maxWidth: "14ch",
+                textAlign: "left",
+              }}
+            >
+              {frame.title.split(" ").map((word, wi, arr) => (
+                <span
+                  key={wi}
+                  className="word"
+                  style={{
+                    display: "inline-block",
+                    marginRight: wi < arr.length - 1 ? "0.28em" : 0,
+                  }}
+                >
+                  {word}
+                </span>
+              ))}
+            </h2>
+
+            <p
+              className="frame-sub"
+              style={{
+                fontFamily: "var(--font-sans)",
+                fontSize: "var(--text-caption)",
+                fontWeight: 300,
+                letterSpacing: "0.1em",
+                textTransform: "uppercase",
+                color: frame.text,
+                opacity: 0.5,
+                marginTop: "2rem",
+                textAlign: "left",
+              }}
+            >
+              {frame.sub}
+            </p>
+          </div>
         </div>
       ))}
     </main>
