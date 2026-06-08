@@ -6,6 +6,7 @@
   --color-accent: #C8A96E;
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
+  --font-display: var(--font-display);
 
   /* Type scale — semântica por uso, não por tamanho */
   --text-display:              clamp(5.6rem, 14.4vw, 12rem);

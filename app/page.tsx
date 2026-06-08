@@ -95,12 +95,14 @@ export default function Home() {
             [{frame.label}]
           </span>
           <h2
-            className="relative z-10 text-center font-light max-w-2xl"
+            className="relative z-10 text-center max-w-2xl"
             style={{
+              fontFamily: "var(--font-display)",
               fontSize: "clamp(1.5rem, 4vw, 3rem)",
+              fontWeight: 800,
               color: frame.text,
-              letterSpacing: "0.01em",
-              lineHeight: 1.3,
+              letterSpacing: "-0.02em",
+              lineHeight: 0.95,
             }}
           >
             {frame.title}

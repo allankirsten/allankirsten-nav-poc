@@ -64,6 +64,7 @@ const css = `
   .type-preview {
     overflow-wrap: break-word;
     word-break: break-word;
+    font-family: var(--font-display), sans-serif;
   }
   .type-example {
     margin-top: 1.25rem;
@@ -209,7 +210,7 @@ export default function DesignSystem() {
           </p>
 
           {/* title — Ink: ênfase máxima */}
-          <h2 style={{ fontSize: "clamp(3.25rem, 7.8vw, 5.85rem)", lineHeight: 0.95, fontWeight: 700, letterSpacing: "-0.02em", marginBottom: "2rem", overflowWrap: "break-word", color: "#000000" }}>
+          <h2 style={{ fontFamily: "var(--font-display)", fontSize: "clamp(3.25rem, 7.8vw, 5.85rem)", lineHeight: 0.95, fontWeight: 800, letterSpacing: "-0.02em", marginBottom: "2rem", overflowWrap: "break-word", color: "#000000" }}>
             Remessa Online
           </h2>
 
@@ -233,7 +234,7 @@ export default function DesignSystem() {
             ].map((m) => (
               <div key={m.label}>
                 {/* número — Ink: dado principal, impacto visual */}
-                <p style={{ fontSize: "clamp(2rem, 4vw, 3rem)", lineHeight: 1.1, fontWeight: 300, letterSpacing: "-0.02em", color: "#000000" }}>
+                <p style={{ fontFamily: "var(--font-display)", fontSize: "clamp(2rem, 4vw, 3rem)", lineHeight: 1.1, fontWeight: 800, letterSpacing: "-0.02em", color: "#000000" }}>
                   {m.value}
                 </p>
                 {/* label — Tertiary: contexto, segundo plano */}
