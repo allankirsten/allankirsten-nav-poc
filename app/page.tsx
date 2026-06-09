@@ -4,28 +4,8 @@ import { useEffect } from "react";
 import Link from "next/link";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
-
-type Frame = {
-  id: string;
-  label: string;
-  title: string;
-  sub: string;
-  subHref?: string;
-  bg: string;
-  text: string;
-  links?: Record<string, string>; // phrase (as it appears in title) → href
-};
-
-const frames: Frame[] = [
-  { id: "abertura",      label: "01", title: "Design doesn't decorate. Design decides.",       sub: "A belief, not a tagline.",   bg: "#000", text: "#fff" },
-  { id: "provocacao",    label: "02", title: "Most designers ship screens. I ship businesses.", sub: "20+ years of proof.",        bg: "#fff", text: "#000" },
-  { id: "identidade",    label: "03", title: "Two decades. Two exits. One craft.",              sub: "Design as a multiplier.",    bg: "#000", text: "#fff" },
-  { id: "prova",         label: "04", title: "Remessa Online. Bipa. Betterfly.",                sub: "From seed to scale.",        bg: "#fff", text: "#000",
-    links: { "Remessa Online.": "/cases/remessa-online", "Bipa.": "/cases/bipa", "Betterfly.": "/cases/betterfly" } },
-  { id: "metodo",        label: "05", title: "Clarity. Velocity. Impact.",                      sub: "How I work, every time.",    subHref: "/how-i-work", bg: "#000", text: "#fff" },
-  { id: "credibilidade", label: "06", title: "$229M exit. 4M users. One designer.",             sub: "Results, not résumé.",       bg: "#fff", text: "#000" },
-  { id: "desfecho",      label: "07", title: "Are you building something that matters?",        sub: "Let's talk.",                bg: "#000", text: "#fff" },
-];
+import { frames } from "@/content/frames";
+import type { Frame } from "@/content/types";
 
 // Breaks title into segments, grouping multi-word linked phrases together.
 function parseTitle(title: string, links?: Record<string, string>) {
