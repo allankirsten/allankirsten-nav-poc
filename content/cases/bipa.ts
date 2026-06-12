@@ -4,7 +4,6 @@ export const bipaContent: CaseContent = {
   hero: {
     title: "Bipa.",
     meta: [
-      { label: "Company", value: "Bipa" },
       { label: "Role",    value: "Lead Product Designer" },
       { label: "Year",    value: "2022–2023" },
       { label: "Sector",  value: "B2B Fintech" },

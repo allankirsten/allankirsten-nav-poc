@@ -1,11 +1,12 @@
 import type { Metadata } from "next";
-import { Geist, DM_Serif_Display } from "next/font/google";
+import { Atkinson_Hyperlegible, DM_Serif_Display } from "next/font/google";
 import "./globals.css";
 import { Navigation } from "@/components/Navigation";
 
-const geist = Geist({
+const atkinson = Atkinson_Hyperlegible({
   variable: "--font-geist-sans",
   subsets: ["latin"],
+  weight: ["400", "700"],
 });
 
 const dmSerif = DM_Serif_Display({
@@ -25,7 +26,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="pt-BR" className={`${geist.variable} ${dmSerif.variable} antialiased`}>
+    <html lang="pt-BR" className={`${atkinson.variable} ${dmSerif.variable} antialiased`}>
       <body>
         <Navigation />
         {children}

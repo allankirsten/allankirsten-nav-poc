@@ -4,7 +4,6 @@ export const remessaContent: CaseContent = {
   hero: {
     title: "Remessa\nOnline.",
     meta: [
-      { label: "Company", value: "Remessa Online" },
       { label: "Role",    value: "Lead Product Designer" },
       { label: "Year",    value: "2021–2022" },
       { label: "Sector",  value: "Fintech / FX" },

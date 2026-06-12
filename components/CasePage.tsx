@@ -1,8 +1,7 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useLayoutEffect } from "react";
 import gsap from "gsap";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { BackButton } from "@/components/BackButton";
 import type { CaseContent } from "@/content/types";
 
@@ -15,9 +14,10 @@ const css = `
   .case-hero {
     display: flex;
     flex-direction: column;
-    justify-content: flex-start;
+    justify-content: space-between;
+    height: 100dvh;
+    box-sizing: border-box;
     padding: clamp(5rem, 10vw, 8rem) clamp(1.5rem, 6vw, 6rem) clamp(3rem, 6vw, 5rem);
-    border-bottom: 1px solid #e5e5e5;
   }
   .case-title {
     font-family: var(--font-display);
@@ -56,6 +56,8 @@ const css = `
     display: grid;
     grid-template-columns: repeat(2, 1fr);
     border-top: 1px solid #e5e5e5;
+    margin-inline: calc(-1 * clamp(1.5rem, 6vw, 6rem));
+    width: calc(100% + 2 * clamp(1.5rem, 6vw, 6rem));
   }
   .metric-cell {
     padding: clamp(2rem, 5vw, 4rem) clamp(1.5rem, 6vw, 6rem);
@@ -137,8 +139,22 @@ const css = `
 export function CasePage({ content }: { content: CaseContent }) {
   const { hero, metrics, sections, cta } = content;
 
+  useLayoutEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
+
   useEffect(() => {
-    gsap.registerPlugin(ScrollTrigger);
+    const tl = gsap.timeline({ repeat: -1, repeatDelay: 1.5 });
+
+    tl.fromTo(".case-title", { opacity: 0, y: 40 },
+      { opacity: 1, y: 0, duration: 0.9, ease: "power3.out" }, 0);
+    tl.fromTo(".case-meta-item", { opacity: 0, y: 20 },
+      { opacity: 1, y: 0, duration: 0.7, ease: "power2.out", stagger: 0.08 }, 0.45);
+    tl.fromTo(".case-tagline", { opacity: 0, y: 20 },
+      { opacity: 1, y: 0, duration: 0.7, ease: "power2.out" }, 1.0);
+
+    tl.fromTo(".case-metrics", { borderTopColor: "rgba(229,229,229,0)" },
+      { borderTopColor: "#e5e5e5", duration: 0.5, ease: "power1.out" }, 1.2);
 
     const cells = document.querySelectorAll<HTMLElement>(".metric-cell");
     cells.forEach((cell, i) => {
@@ -146,29 +162,26 @@ export function CasePage({ content }: { content: CaseContent }) {
       if (!valueEl) return;
 
       const m = metrics[i];
+      const start = 1.2 + i * 0.08;
 
-      gsap.fromTo(cell,
-        { opacity: 0, y: 32 },
-        {
-          opacity: 1, y: 0, duration: 0.7, ease: "power3.out", delay: i * 0.08,
-          scrollTrigger: { trigger: cell, start: "top 88%", toggleActions: "play none none none" },
-        }
+      tl.fromTo(cell,
+        { opacity: 0, y: 32, borderColor: "rgba(229,229,229,0)" },
+        { opacity: 1, y: 0, borderColor: "#e5e5e5", duration: 0.7, ease: "power3.out" },
+        start
       );
 
       if (m.count !== undefined) {
         const obj = { val: 0 };
-        valueEl.textContent = (m.prefix ?? "") + "0" + (m.suffix ?? "");
-        gsap.to(obj, {
-          val: m.count, duration: 1.8, ease: "power2.out", delay: i * 0.08 + 0.15,
+        tl.to(obj, {
+          val: m.count, duration: 1.4, ease: "sine.out",
           onUpdate() {
             valueEl.textContent = (m.prefix ?? "") + Math.round(obj.val) + (m.suffix ?? "");
           },
-          scrollTrigger: { trigger: cell, start: "top 88%", toggleActions: "play none none none" },
-        });
+        }, start + 0.15);
       }
     });
 
-    return () => { ScrollTrigger.getAll().forEach((t) => t.kill()); };
+    return () => { tl.kill(); };
   }, [metrics]);
 
   return (
@@ -176,26 +189,26 @@ export function CasePage({ content }: { content: CaseContent }) {
       <style dangerouslySetInnerHTML={{ __html: css }} />
 
       <section className="case-hero">
-        <h1 className="case-title">{hero.title}</h1>
+        <h1 className="case-title" style={{ opacity: 0 }}>{hero.title}</h1>
         <div className="case-meta">
           {hero.meta.map((m) => (
-            <div key={m.label} className="case-meta-item">
+            <div key={m.label} className="case-meta-item" style={{ opacity: 0 }}>
               <span className="case-meta-label">{m.label}</span>
               <span className="case-meta-value">{m.value}</span>
             </div>
           ))}
         </div>
-        <p className="case-tagline">{hero.tagline}</p>
-      </section>
+        <p className="case-tagline" style={{ opacity: 0 }}>{hero.tagline}</p>
 
-      <div className="case-metrics">
-        {metrics.map((m) => (
-          <div key={m.label} className="metric-cell">
-            <p className="metric-value">{m.display}</p>
-            <p className="metric-label">{m.label}</p>
-          </div>
-        ))}
-      </div>
+        <div className="case-metrics" style={{ borderTopColor: "rgba(229,229,229,0)" }}>
+          {metrics.map((m) => (
+            <div key={m.label} className="metric-cell" style={{ opacity: 0, borderColor: "rgba(229,229,229,0)" }}>
+              <p className="metric-value">{m.count !== undefined ? `${m.prefix ?? ""}0${m.suffix ?? ""}` : m.display}</p>
+              <p className="metric-label">{m.label}</p>
+            </div>
+          ))}
+        </div>
+      </section>
 
       <div className="case-body">
         {sections.map((s, i) => (

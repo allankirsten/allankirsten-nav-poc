@@ -4,7 +4,6 @@ export const betterflyContent: CaseContent = {
   hero: {
     title: "Betterfly.",
     meta: [
-      { label: "Company", value: "Betterfly" },
       { label: "Role",    value: "Head of Product Design" },
       { label: "Year",    value: "2022–2023" },
       { label: "Sector",  value: "HR Tech / B2B SaaS" },

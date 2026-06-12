@@ -35,6 +35,71 @@ function parseTitle(title: string, links?: Record<string, string>) {
   return segments;
 }
 
+// Splits text into individual char spans for letter-by-letter reveal animations.
+function renderChars(text: string) {
+  return text.split("").map((ch, i) => (
+    <span key={i} className="sub-char" style={{ display: "inline-block", whiteSpace: "pre" }}>
+      {ch}
+    </span>
+  ));
+}
+
+// Renders a title's words as spans, grouping linked phrases into <Link> elements.
+function renderTitleWords(frame: Frame, onLinkClick: () => void) {
+  const segments = parseTitle(frame.title, frame.links);
+  const totalWords = frame.title.split(" ").length;
+  let globalIdx = 0;
+  return segments.map((seg, si) => {
+    const wordSpans = seg.words.map((w) => {
+      const idx = globalIdx++;
+      const mr = idx < totalWords - 1 ? "0.28em" : 0;
+      return (
+        <span key={idx} className="word" style={{ display: "inline-block", marginRight: mr }}>
+          {w}
+        </span>
+      );
+    });
+    if (seg.href) {
+      return (
+        <Link
+          key={si}
+          href={seg.href}
+          onClick={onLinkClick}
+          style={{
+            color: "inherit",
+            textDecoration: "underline",
+            textDecorationThickness: "0.04em",
+            textUnderlineOffset: "0.12em",
+          }}
+        >
+          {wordSpans}
+        </Link>
+      );
+    }
+    return <span key={si}>{wordSpans}</span>;
+  });
+}
+
+// Computes per-character entry delays so the reveal pauses naturally at spaces, commas, and periods.
+function getSubCharDelays(text: string) {
+  const BASE = 0.045;
+  const SPACE_PAUSE = 0.09;
+  const COMMA_PAUSE = 0.28;
+  const PERIOD_PAUSE = 0.45;
+  const delays: number[] = [];
+  let t = 0;
+  for (let i = 0; i < text.length; i++) {
+    delays.push(t);
+    const ch = text[i];
+    let gap = BASE;
+    if (ch === ",") gap += COMMA_PAUSE;
+    else if (ch === ".") gap += PERIOD_PAUSE;
+    else if (ch === " ") gap += SPACE_PAUSE;
+    t += gap;
+  }
+  return delays;
+}
+
 const SCROLL_KEY = "homeScrollY";
 
 export default function Home() {
@@ -56,46 +121,65 @@ export default function Home() {
 
       const textBlock = frameEl.querySelector<HTMLElement>(".frame-text");
       const words = frameEl.querySelectorAll<HTMLElement>(".word");
-      const sub = frameEl.querySelector<HTMLElement>(".frame-sub");
+      const subChars = frameEl.querySelectorAll<HTMLElement>(".sub-char");
+      const subDelays = getSubCharDelays(frames[i].sub);
       const frameStart = i * fh;
       const alreadyPast = restoringScroll && frameStart < targetY;
 
       if (textBlock) {
         gsap.fromTo(textBlock, { y: 0 }, {
           y: 40, ease: "none",
-          scrollTrigger: { start: frameStart, end: frameStart + fh, scrub: 1 },
+          scrollTrigger: { start: frameStart, end: frameStart + fh, scrub: true },
         });
       }
 
       if (!words.length) return;
 
-      const wordDelay = words.length * 0.09 + 0.15;
+      const wordDelay = words.length * 0.1521 + 0.2535;
+
+      const labelEl = frameEl.querySelector<HTMLElement>(".hero-label");
+      const cueEl = frameEl.querySelector<HTMLElement>(".scroll-cue");
 
       if (alreadyPast) {
         gsap.set(words, { opacity: 1, y: 0, scale: 1 });
-        if (sub) gsap.set(sub, { opacity: 0.5, y: 0 });
+        if (subChars.length) gsap.set(subChars, { opacity: 1, y: 0 });
+        if (labelEl) gsap.set(labelEl, { opacity: 1, y: 0 });
+        if (cueEl) gsap.set(cueEl, { opacity: 1, y: 0 });
         return;
       }
 
       if (i === 0) {
         if (!restoringScroll) {
+          if (labelEl) gsap.fromTo(labelEl, { opacity: 0, y: -28 },
+            { opacity: 1, y: 0, duration: 0.9, ease: "power2.out" });
+
           gsap.fromTo(words, { opacity: 0, y: 40, scale: 0.96 },
-            { opacity: 1, y: 0, scale: 1, stagger: 0.09, duration: 1.0, ease: "power3.out" });
-          if (sub) gsap.fromTo(sub, { opacity: 0, y: 16 },
-            { opacity: 0.5, y: 0, duration: 0.7, ease: "power3.out", delay: wordDelay });
+            { opacity: 1, y: 0, scale: 1, stagger: 0.1521, duration: 1.69, ease: "power3.out", delay: 0.15 });
+
+          if (subChars.length) gsap.fromTo(subChars, { opacity: 0, y: 12 },
+            { opacity: 1, y: 0, stagger: (idx: number) => subDelays[idx], duration: 0.6, ease: "power2.out", delay: 0.4 });
+
+          if (cueEl) gsap.fromTo(cueEl, { opacity: 0, y: -8 }, {
+            opacity: 1, y: 0, duration: 0.6, ease: "power2.out", delay: 0.6,
+            onComplete: () => {
+              gsap.to(cueEl, { y: 6, duration: 1.2, repeat: -1, yoyo: true, ease: "sine.inOut" });
+            },
+          });
         } else {
           gsap.set(words, { opacity: 1, y: 0, scale: 1 });
-          if (sub) gsap.set(sub, { opacity: 0.5, y: 0 });
+          if (subChars.length) gsap.set(subChars, { opacity: 1, y: 0 });
+          if (labelEl) gsap.set(labelEl, { opacity: 1, y: 0 });
+          if (cueEl) gsap.set(cueEl, { opacity: 1, y: 0 });
         }
         return;
       }
 
       gsap.fromTo(words, { opacity: 0, y: 40, scale: 0.96 }, {
-        opacity: 1, y: 0, scale: 1, stagger: 0.09, duration: 1.0, ease: "power3.out",
+        opacity: 1, y: 0, scale: 1, stagger: 0.1521, duration: 1.69, ease: "power3.out",
         scrollTrigger: { start: frameStart - 120, end: frameStart + fh * 0.25, toggleActions: "play none none none" },
       });
-      if (sub) gsap.fromTo(sub, { opacity: 0, y: 16 }, {
-        opacity: 0.5, y: 0, duration: 0.7, ease: "power3.out", delay: wordDelay,
+      if (subChars.length) gsap.fromTo(subChars, { opacity: 0, y: 12 }, {
+        opacity: 1, y: 0, stagger: (idx: number) => subDelays[idx], duration: 0.6, ease: "power2.out", delay: wordDelay,
         scrollTrigger: { start: frameStart - 120, end: frameStart + fh * 0.25, toggleActions: "play none none none" },
       });
     });
@@ -118,137 +202,197 @@ export default function Home() {
         <div
           key={frame.id}
           id={frame.id}
-          style={{
-            position: "sticky",
-            top: 0,
-            height: "100dvh",
-            background: frame.bg,
-            zIndex: i + 1,
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "flex-start",
-            paddingLeft: "clamp(1.5rem, 6vw, 6rem)",
-          }}
+          style={
+            i === 0
+              ? {
+                  position: "sticky",
+                  top: 0,
+                  height: "100dvh",
+                  background: frame.bg,
+                  zIndex: i + 1,
+                  display: "flex",
+                }
+              : {
+                  position: "sticky",
+                  top: 0,
+                  height: "100dvh",
+                  background: frame.bg,
+                  zIndex: i + 1,
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "flex-start",
+                  paddingLeft: "clamp(1.5rem, 6vw, 6rem)",
+                }
+          }
         >
-          <div
-            className="frame-text"
-            style={{
-              position: "relative",
-              zIndex: 10,
-              display: "flex",
-              flexDirection: "column",
-              alignItems: "flex-start",
-              width: "100%",
-              maxWidth: "80ch",
-              boxSizing: "border-box",
-              willChange: "transform",
-            }}
-          >
-            <span
-              className="frame-label"
+          {i === 0 ? (
+            <div
+              className="frame-text"
               style={{
-                fontFamily: "var(--font-sans)",
-                fontSize: "var(--text-caption)",
-                letterSpacing: "0.15em",
-                textTransform: "uppercase",
-                color: frame.text,
-                marginBottom: "1.5rem",
-                display: "block",
+                position: "relative",
+                zIndex: 10,
+                display: "flex",
+                flexDirection: "column",
+                justifyContent: "space-between",
+                height: "100%",
+                width: "100%",
+                boxSizing: "border-box",
+                willChange: "transform",
+                padding: "clamp(1.5rem, 4vw, 3rem) clamp(1.5rem, 6vw, 6rem)",
               }}
             >
-              {frame.label}
-            </span>
+              {/* Band 1 — label */}
+              <div className="hero-label">
+                <span
+                  style={{
+                    fontFamily: "var(--font-sans)",
+                    fontSize: "var(--text-caption)",
+                    letterSpacing: "0.15em",
+                    textTransform: "uppercase",
+                    color: frame.text,
+                    display: "block",
+                  }}
+                >
+                  {frame.label}
+                </span>
+              </div>
 
-            <h2
+              {/* Band 2 — title */}
+              <div style={{ display: "flex", alignItems: "center", flex: 1, minHeight: 0 }}>
+                <h2
+                  style={{
+                    fontFamily: "var(--font-display)",
+                    fontSize: "var(--text-display)",
+                    lineHeight: "var(--text-display--line-height)",
+                    fontWeight: 400,
+                    color: frame.text,
+                    letterSpacing: "-0.01em",
+                    maxWidth: "14ch",
+                    textAlign: "left",
+                  }}
+                >
+                  {renderTitleWords(frame, saveScroll)}
+                </h2>
+              </div>
+
+              {/* Band 3 — tagline + scroll cue */}
+              <div style={{ display: "flex", alignItems: "flex-end", justifyContent: "space-between", gap: "1rem" }}>
+                <p
+                  className="frame-sub"
+                  style={{
+                    fontFamily: "var(--font-sans)",
+                    fontSize: "var(--text-caption)",
+                    fontWeight: 300,
+                    letterSpacing: "0.1em",
+                    textTransform: "uppercase",
+                    color: frame.text,
+                    opacity: 0.5,
+                    textAlign: "left",
+                  }}
+                >
+                  {renderChars(frame.sub)}
+                </p>
+                <span
+                  className="scroll-cue"
+                  style={{
+                    fontSize: "1.25rem",
+                    color: frame.text,
+                    opacity: 0.5,
+                    lineHeight: 1,
+                  }}
+                >
+                  ↓
+                </span>
+              </div>
+            </div>
+          ) : (
+            <div
+              className="frame-text"
               style={{
-                fontFamily: "var(--font-display)",
-                fontSize: "var(--text-display)",
-                lineHeight: "var(--text-display--line-height)",
-                fontWeight: 400,
-                color: frame.text,
-                letterSpacing: "-0.01em",
-                maxWidth: "14ch",
-                textAlign: "left",
+                position: "relative",
+                zIndex: 10,
+                display: "flex",
+                flexDirection: "column",
+                alignItems: "flex-start",
+                width: "100%",
+                maxWidth: "80ch",
+                boxSizing: "border-box",
+                willChange: "transform",
               }}
             >
-              {(() => {
-                const segments = parseTitle(frame.title, frame.links);
-                const totalWords = frame.title.split(" ").length;
-                let globalIdx = 0;
-                return segments.map((seg, si) => {
-                  const wordSpans = seg.words.map((w) => {
-                    const idx = globalIdx++;
-                    const mr = idx < totalWords - 1 ? "0.28em" : 0;
-                    return (
-                      <span key={idx} className="word" style={{ display: "inline-block", marginRight: mr }}>
-                        {w}
-                      </span>
-                    );
-                  });
-                  if (seg.href) {
-                    return (
-                      <Link
-                        key={si}
-                        href={seg.href}
-                        onClick={saveScroll}
-                        style={{
-                          color: "inherit",
-                          textDecoration: "underline",
-                          textDecorationThickness: "0.04em",
-                          textUnderlineOffset: "0.12em",
-                        }}
-                      >
-                        {wordSpans}
-                      </Link>
-                    );
-                  }
-                  return <span key={si}>{wordSpans}</span>;
-                });
-              })()}
-            </h2>
-
-            {frame.subHref ? (
-              <Link
-                href={frame.subHref}
-                onClick={saveScroll}
-                className="frame-sub"
+              <span
+                className="frame-label"
                 style={{
                   fontFamily: "var(--font-sans)",
                   fontSize: "var(--text-caption)",
-                  fontWeight: 300,
-                  letterSpacing: "0.1em",
+                  letterSpacing: "0.15em",
                   textTransform: "uppercase",
                   color: frame.text,
-                  opacity: 0.5,
-                  marginTop: "2rem",
-                  textAlign: "left",
+                  marginBottom: "1.5rem",
                   display: "block",
-                  textDecoration: "underline",
-                  textDecorationThickness: "0.04em",
-                  textUnderlineOffset: "0.2em",
                 }}
               >
-                {frame.sub}
-              </Link>
-            ) : (
-              <p
-                className="frame-sub"
+                {frame.label}
+              </span>
+
+              <h2
                 style={{
-                  fontFamily: "var(--font-sans)",
-                  fontSize: "var(--text-caption)",
-                  fontWeight: 300,
-                  letterSpacing: "0.1em",
-                  textTransform: "uppercase",
+                  fontFamily: "var(--font-display)",
+                  fontSize: "var(--text-display)",
+                  lineHeight: "var(--text-display--line-height)",
+                  fontWeight: 400,
                   color: frame.text,
-                  opacity: 0.5,
-                  marginTop: "2rem",
+                  letterSpacing: "-0.01em",
+                  maxWidth: "14ch",
                   textAlign: "left",
                 }}
               >
-                {frame.sub}
-              </p>
-            )}
-          </div>
+                {renderTitleWords(frame, saveScroll)}
+              </h2>
+
+              {frame.subHref ? (
+                <Link
+                  href={frame.subHref}
+                  onClick={saveScroll}
+                  className="frame-sub"
+                  style={{
+                    fontFamily: "var(--font-sans)",
+                    fontSize: "var(--text-caption)",
+                    fontWeight: 300,
+                    letterSpacing: "0.1em",
+                    textTransform: "uppercase",
+                    color: frame.text,
+                    opacity: 0.5,
+                    marginTop: "2rem",
+                    textAlign: "left",
+                    display: "block",
+                    textDecoration: "underline",
+                    textDecorationThickness: "0.04em",
+                    textUnderlineOffset: "0.2em",
+                  }}
+                >
+                  {renderChars(frame.sub)}
+                </Link>
+              ) : (
+                <p
+                  className="frame-sub"
+                  style={{
+                    fontFamily: "var(--font-sans)",
+                    fontSize: "var(--text-caption)",
+                    fontWeight: 300,
+                    letterSpacing: "0.1em",
+                    textTransform: "uppercase",
+                    color: frame.text,
+                    opacity: 0.5,
+                    marginTop: "2rem",
+                    textAlign: "left",
+                  }}
+                >
+                  {renderChars(frame.sub)}
+                </p>
+              )}
+            </div>
+          )}
         </div>
       ))}
     </main>
