@@ -5,7 +5,24 @@ import Link from "next/link";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { frames } from "@/content/frames";
-import type { Frame } from "@/content/types";
+import { testimonials } from "@/content/testimonials";
+import { TestimonialsFrame } from "@/components/TestimonialsFrame";
+import { ContactFrame } from "@/components/ContactFrame";
+import type { Frame, Testimonial } from "@/content/types";
+
+type HomeSection =
+  | { kind: "frame"; frame: Frame }
+  | { kind: "testimonials"; id: string; label: string; bg: string; text: string; testimonials: Testimonial[] }
+  | { kind: "contact"; id: string; label: string; bg: string; text: string };
+
+// Testimonials slot in right after the credibility frame, before the closing CTA.
+const credIdx = frames.findIndex((f) => f.id === "credibilidade");
+const homeSections: HomeSection[] = [
+  ...frames.slice(0, credIdx + 1).map((frame) => ({ kind: "frame" as const, frame })),
+  { kind: "testimonials" as const, id: "depoimentos", label: "07", bg: "#000", text: "#fff", testimonials },
+  ...frames.slice(credIdx + 1).map((frame) => ({ kind: "frame" as const, frame })),
+  { kind: "contact" as const, id: "contato", label: "09", bg: "#fff", text: "#000" },
+];
 
 // Breaks title into segments, grouping multi-word linked phrases together.
 function parseTitle(title: string, links?: Record<string, string>) {
@@ -115,14 +132,12 @@ export default function Home() {
     const targetY = restoringScroll ? parseInt(savedRaw!, 10) : 0;
     if (restoringScroll) sessionStorage.removeItem(SCROLL_KEY);
 
-    frames.forEach((_, i) => {
-      const frameEl = document.getElementById(frames[i].id);
+    homeSections.forEach((section, i) => {
+      const sectionId = section.kind === "frame" ? section.frame.id : section.id;
+      const frameEl = document.getElementById(sectionId);
       if (!frameEl) return;
 
       const textBlock = frameEl.querySelector<HTMLElement>(".frame-text");
-      const words = frameEl.querySelectorAll<HTMLElement>(".word");
-      const subChars = frameEl.querySelectorAll<HTMLElement>(".sub-char");
-      const subDelays = getSubCharDelays(frames[i].sub);
       const frameStart = i * fh;
       const alreadyPast = restoringScroll && frameStart < targetY;
 
@@ -132,6 +147,58 @@ export default function Home() {
           scrollTrigger: { start: frameStart, end: frameStart + fh, scrub: true },
         });
       }
+
+      if (section.kind === "testimonials") {
+        const label = frameEl.querySelector<HTMLElement>(".frame-label");
+        const cards = frameEl.querySelectorAll<HTMLElement>(".testimonial-card");
+
+        if (alreadyPast) {
+          gsap.set([label, ...Array.from(cards)], { opacity: 1, y: 0 });
+          return;
+        }
+
+        if (label) gsap.fromTo(label, { opacity: 0, y: 20 }, {
+          opacity: 1, y: 0, duration: 0.7, ease: "power2.out",
+          scrollTrigger: { start: frameStart - 120, end: frameStart + fh * 0.25, toggleActions: "play none none none" },
+        });
+        if (cards.length) gsap.fromTo(cards, { opacity: 0, y: 30 }, {
+          opacity: 1, y: 0, duration: 0.8, ease: "power3.out", stagger: 0.12, delay: 0.15,
+          scrollTrigger: { start: frameStart - 120, end: frameStart + fh * 0.25, toggleActions: "play none none none" },
+        });
+
+        return;
+      }
+
+      if (section.kind === "contact") {
+        const label = frameEl.querySelector<HTMLElement>(".frame-label");
+        const heading = frameEl.querySelector<HTMLElement>(".contact-heading");
+        const pills = frameEl.querySelectorAll<HTMLElement>(".contact-pill");
+
+        if (alreadyPast) {
+          gsap.set([label, heading, ...Array.from(pills)], { opacity: 1, y: 0 });
+          return;
+        }
+
+        if (label) gsap.fromTo(label, { opacity: 0, y: 20 }, {
+          opacity: 1, y: 0, duration: 0.7, ease: "power2.out",
+          scrollTrigger: { start: frameStart - 120, end: frameStart + fh * 0.25, toggleActions: "play none none none" },
+        });
+        if (heading) gsap.fromTo(heading, { opacity: 0, y: 30 }, {
+          opacity: 1, y: 0, duration: 0.9, ease: "power3.out", delay: 0.1,
+          scrollTrigger: { start: frameStart - 120, end: frameStart + fh * 0.25, toggleActions: "play none none none" },
+        });
+        if (pills.length) gsap.fromTo(pills, { opacity: 0, y: 20 }, {
+          opacity: 1, y: 0, duration: 0.7, ease: "power3.out", stagger: 0.1, delay: 0.25,
+          scrollTrigger: { start: frameStart - 120, end: frameStart + fh * 0.25, toggleActions: "play none none none" },
+        });
+
+        return;
+      }
+
+      const frame = section.frame;
+      const words = frameEl.querySelectorAll<HTMLElement>(".word");
+      const subChars = frameEl.querySelectorAll<HTMLElement>(".sub-char");
+      const subDelays = getSubCharDelays(frame.sub);
 
       if (!words.length) return;
 
@@ -198,7 +265,51 @@ export default function Home() {
 
   return (
     <main style={{ overflowX: "hidden" }}>
-      {frames.map((frame, i) => (
+      {homeSections.map((section, i) => {
+        if (section.kind === "testimonials") {
+          return (
+            <div
+              key={section.id}
+              id={section.id}
+              style={{
+                position: "sticky",
+                top: 0,
+                height: "100dvh",
+                background: section.bg,
+                zIndex: i + 1,
+                display: "flex",
+                alignItems: "center",
+              }}
+            >
+              <TestimonialsFrame testimonials={section.testimonials} label={section.label} text={section.text} />
+            </div>
+          );
+        }
+
+        if (section.kind === "contact") {
+          return (
+            <div
+              key={section.id}
+              id={section.id}
+              style={{
+                position: "sticky",
+                top: 0,
+                height: "100dvh",
+                background: section.bg,
+                zIndex: i + 1,
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "flex-start",
+                paddingLeft: "clamp(1.5rem, 6vw, 6rem)",
+              }}
+            >
+              <ContactFrame label={section.label} text={section.text} />
+            </div>
+          );
+        }
+
+        const frame = section.frame;
+        return (
         <div
           key={frame.id}
           id={frame.id}
@@ -394,7 +505,8 @@ export default function Home() {
             </div>
           )}
         </div>
-      ))}
+        );
+      })}
     </main>
   );
 }

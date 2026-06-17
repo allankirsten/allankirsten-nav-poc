@@ -51,7 +51,7 @@ export const frames: Frame[] = [
   },
   {
     id: "desfecho",
-    label: "07",
+    label: "08",
     title: "Are you building something that matters?",
     sub: "Let's talk.",
     bg: "#000", text: "#fff",

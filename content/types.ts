@@ -54,3 +54,10 @@ export type HowIWorkContent = {
   process: HowIWorkStep[];
   cta: string;
 };
+
+export type Testimonial = {
+  quote: string;
+  name: string;
+  role: string;
+  company: string;
+};
