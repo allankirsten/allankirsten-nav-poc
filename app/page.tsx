@@ -5,20 +5,25 @@ import Link from "next/link";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { frames } from "@/content/frames";
+import { brands } from "@/content/brands";
 import { testimonials } from "@/content/testimonials";
 import { TestimonialsFrame } from "@/components/TestimonialsFrame";
 import { ContactFrame } from "@/components/ContactFrame";
+import { BrandsMarquee } from "@/components/BrandsMarquee";
 import type { Frame, Testimonial } from "@/content/types";
 
 type HomeSection =
   | { kind: "frame"; frame: Frame }
+  | { kind: "brands"; id: string; bg: string }
   | { kind: "testimonials"; id: string; label: string; bg: string; text: string; testimonials: Testimonial[] }
   | { kind: "contact"; id: string; label: string; bg: string; text: string };
 
-// Testimonials slot in right after the credibility frame, before the closing CTA.
+const provIdx = frames.findIndex((f) => f.id === "provocacao");
 const credIdx = frames.findIndex((f) => f.id === "credibilidade");
 const homeSections: HomeSection[] = [
-  ...frames.slice(0, credIdx + 1).map((frame) => ({ kind: "frame" as const, frame })),
+  ...frames.slice(0, provIdx + 1).map((frame) => ({ kind: "frame" as const, frame })),
+  { kind: "brands" as const, id: "marcas", bg: "#111" },
+  ...frames.slice(provIdx + 1, credIdx + 1).map((frame) => ({ kind: "frame" as const, frame })),
   { kind: "testimonials" as const, id: "depoimentos", label: "07", bg: "#000", text: "#fff", testimonials },
   ...frames.slice(credIdx + 1).map((frame) => ({ kind: "frame" as const, frame })),
   { kind: "contact" as const, id: "contato", label: "09", bg: "#fff", text: "#000" },
@@ -123,14 +128,22 @@ export default function Home() {
   useEffect(() => {
     gsap.registerPlugin(ScrollTrigger);
 
-    const firstFrame = document.getElementById(frames[0].id);
-    const fh = firstFrame?.offsetHeight || window.innerHeight;
-    document.documentElement.style.setProperty("--frame-h", `${fh}px`);
+    const vh = window.innerHeight;
+    document.documentElement.style.setProperty("--frame-h", `${vh}px`);
 
     const savedRaw = sessionStorage.getItem(SCROLL_KEY);
     const restoringScroll = savedRaw !== null;
     const targetY = restoringScroll ? parseInt(savedRaw!, 10) : 0;
     if (restoringScroll) sessionStorage.removeItem(SCROLL_KEY);
+
+    // Measure actual rendered heights so scroll triggers work with flexible containers
+    const frameTops: number[] = [];
+    let cumulative = 0;
+    homeSections.forEach((section) => {
+      const id = section.kind === "frame" ? section.frame.id : section.id;
+      frameTops.push(cumulative);
+      cumulative += document.getElementById(id)?.offsetHeight ?? vh;
+    });
 
     homeSections.forEach((section, i) => {
       const sectionId = section.kind === "frame" ? section.frame.id : section.id;
@@ -138,13 +151,14 @@ export default function Home() {
       if (!frameEl) return;
 
       const textBlock = frameEl.querySelector<HTMLElement>(".frame-text");
-      const frameStart = i * fh;
+      const frameStart = frameTops[i];
+      const frameHeight = frameEl.offsetHeight;
       const alreadyPast = restoringScroll && frameStart < targetY;
 
       if (textBlock) {
         gsap.fromTo(textBlock, { y: 0 }, {
           y: 40, ease: "none",
-          scrollTrigger: { start: frameStart, end: frameStart + fh, scrub: true },
+          scrollTrigger: { start: frameStart, end: frameStart + frameHeight, scrub: true },
         });
       }
 
@@ -159,11 +173,11 @@ export default function Home() {
 
         if (label) gsap.fromTo(label, { opacity: 0, y: 20 }, {
           opacity: 1, y: 0, duration: 0.7, ease: "power2.out",
-          scrollTrigger: { start: frameStart - 120, end: frameStart + fh * 0.25, toggleActions: "play none none none" },
+          scrollTrigger: { start: frameStart - 120, end: frameStart + frameHeight * 0.25, toggleActions: "play none none none" },
         });
         if (cards.length) gsap.fromTo(cards, { opacity: 0, y: 30 }, {
           opacity: 1, y: 0, duration: 0.8, ease: "power3.out", stagger: 0.12, delay: 0.15,
-          scrollTrigger: { start: frameStart - 120, end: frameStart + fh * 0.25, toggleActions: "play none none none" },
+          scrollTrigger: { start: frameStart - 120, end: frameStart + frameHeight * 0.25, toggleActions: "play none none none" },
         });
 
         return;
@@ -181,19 +195,21 @@ export default function Home() {
 
         if (label) gsap.fromTo(label, { opacity: 0, y: 20 }, {
           opacity: 1, y: 0, duration: 0.7, ease: "power2.out",
-          scrollTrigger: { start: frameStart - 120, end: frameStart + fh * 0.25, toggleActions: "play none none none" },
+          scrollTrigger: { start: frameStart - 120, end: frameStart + frameHeight * 0.25, toggleActions: "play none none none" },
         });
         if (heading) gsap.fromTo(heading, { opacity: 0, y: 30 }, {
           opacity: 1, y: 0, duration: 0.9, ease: "power3.out", delay: 0.1,
-          scrollTrigger: { start: frameStart - 120, end: frameStart + fh * 0.25, toggleActions: "play none none none" },
+          scrollTrigger: { start: frameStart - 120, end: frameStart + frameHeight * 0.25, toggleActions: "play none none none" },
         });
         if (pills.length) gsap.fromTo(pills, { opacity: 0, y: 20 }, {
           opacity: 1, y: 0, duration: 0.7, ease: "power3.out", stagger: 0.1, delay: 0.25,
-          scrollTrigger: { start: frameStart - 120, end: frameStart + fh * 0.25, toggleActions: "play none none none" },
+          scrollTrigger: { start: frameStart - 120, end: frameStart + frameHeight * 0.25, toggleActions: "play none none none" },
         });
 
         return;
       }
+
+      if (section.kind !== "frame") return;
 
       const frame = section.frame;
       const words = frameEl.querySelectorAll<HTMLElement>(".word");
@@ -245,15 +261,15 @@ export default function Home() {
 
       gsap.fromTo(words, { opacity: 0, y: 40, scale: 0.96 }, {
         opacity: 1, y: 0, scale: 1, stagger: 0.1521, duration: 1.69, ease: "power3.out",
-        scrollTrigger: { start: frameStart - 120, end: frameStart + fh * 0.25, toggleActions: "play none none none" },
+        scrollTrigger: { start: frameStart - 120, end: frameStart + frameHeight * 0.25, toggleActions: "play none none none" },
       });
       if (subChars.length) gsap.fromTo(subChars, { opacity: 0, y: 12 }, {
         opacity: 1, y: 0, stagger: (idx: number) => subDelays[idx], duration: 0.6, ease: "power2.out", delay: wordDelay,
-        scrollTrigger: { start: frameStart - 120, end: frameStart + fh * 0.25, toggleActions: "play none none none" },
+        scrollTrigger: { start: frameStart - 120, end: frameStart + frameHeight * 0.25, toggleActions: "play none none none" },
       });
       if (ctaEl) gsap.fromTo(ctaEl, { opacity: 0, y: 12 }, {
         opacity: 1, y: 0, duration: 0.5, ease: "power2.out", delay: wordDelay + 0.3,
-        scrollTrigger: { start: frameStart - 120, end: frameStart + fh * 0.25, toggleActions: "play none none none" },
+        scrollTrigger: { start: frameStart - 120, end: frameStart + frameHeight * 0.25, toggleActions: "play none none none" },
       });
     });
 
@@ -272,6 +288,29 @@ export default function Home() {
   return (
     <main style={{ overflowX: "hidden" }}>
       {homeSections.map((section, i) => {
+        if (section.kind === "brands") {
+          return (
+            <div
+              key={section.id}
+              id={section.id}
+              style={{
+                position: "sticky",
+                top: 0,
+                minHeight: "100dvh",
+                background: section.bg,
+                zIndex: i + 1,
+                display: "flex",
+                flexDirection: "column",
+                alignItems: "stretch",
+                justifyContent: "center",
+                boxSizing: "border-box",
+              }}
+            >
+              <BrandsMarquee brands={brands} />
+            </div>
+          );
+        }
+
         if (section.kind === "testimonials") {
           return (
             <div
@@ -280,11 +319,13 @@ export default function Home() {
               style={{
                 position: "sticky",
                 top: 0,
-                height: "100dvh",
+                minHeight: "100dvh",
                 background: section.bg,
                 zIndex: i + 1,
                 display: "flex",
                 alignItems: "center",
+                padding: "clamp(5rem, 16vw, 14rem) 0",
+                boxSizing: "border-box",
               }}
             >
               <TestimonialsFrame testimonials={section.testimonials} label={section.label} text={section.text} />
@@ -300,13 +341,14 @@ export default function Home() {
               style={{
                 position: "sticky",
                 top: 0,
-                height: "100dvh",
+                minHeight: "100dvh",
                 background: section.bg,
                 zIndex: i + 1,
                 display: "flex",
                 alignItems: "center",
                 justifyContent: "flex-start",
-                paddingLeft: "clamp(1.5rem, 6vw, 6rem)",
+                padding: "clamp(5rem, 16vw, 14rem) clamp(1.5rem, 6vw, 6rem)",
+                boxSizing: "border-box",
               }}
             >
               <ContactFrame label={section.label} text={section.text} />
@@ -322,13 +364,14 @@ export default function Home() {
           style={{
             position: "sticky",
             top: 0,
-            height: "100dvh",
+            minHeight: "100dvh",
             background: frame.bg,
             zIndex: i + 1,
             display: "flex",
             alignItems: "center",
             justifyContent: "flex-start",
-            paddingLeft: "clamp(1.5rem, 6vw, 6rem)",
+            padding: "clamp(5rem, 16vw, 14rem) clamp(1.5rem, 6vw, 6rem)",
+            boxSizing: "border-box",
           }}
         >
           {i === 0 ? (
@@ -341,7 +384,6 @@ export default function Home() {
                 flexDirection: "column",
                 alignItems: "flex-start",
                 width: "100%",
-                maxWidth: "80ch",
                 boxSizing: "border-box",
                 willChange: "transform",
               }}
@@ -369,7 +411,6 @@ export default function Home() {
                   fontWeight: 400,
                   color: frame.text,
                   letterSpacing: "-0.01em",
-                  maxWidth: "14ch",
                   textAlign: "left",
                 }}
               >
@@ -415,7 +456,6 @@ export default function Home() {
                 flexDirection: "column",
                 alignItems: "flex-start",
                 width: "100%",
-                maxWidth: "80ch",
                 boxSizing: "border-box",
                 willChange: "transform",
               }}
@@ -443,7 +483,6 @@ export default function Home() {
                   fontWeight: 400,
                   color: frame.text,
                   letterSpacing: "-0.01em",
-                  maxWidth: "14ch",
                   textAlign: "left",
                 }}
               >

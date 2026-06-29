@@ -9,7 +9,7 @@
   --font-display: var(--font-display);
 
   /* Type scale — semântica por uso, não por tamanho */
-  --text-display:              clamp(5.6rem, 14.4vw, 12rem);
+  --text-display:              clamp(5.6rem, 10vw, 9.5rem);
   --text-display--line-height: 0.88;
 
   --text-title:                clamp(3.25rem, 7.8vw, 5.85rem);

@@ -7,7 +7,7 @@ const css = `
   .testimonial-track {
     display: flex;
     justify-content: flex-start;
-    gap: 2.5rem;
+    gap: clamp(2.5rem, 6vw, 8rem);
     overflow-x: auto;
     scroll-snap-type: x mandatory;
     scroll-padding-inline: clamp(2rem, 8vw, 8rem);
@@ -18,13 +18,19 @@ const css = `
   .testimonial-card {
     flex: 0 0 auto;
     scroll-snap-align: start;
-    width: clamp(300px, 75vw, 460px);
+    width: clamp(260px, 65vw, 688px);
     display: flex;
     flex-direction: column;
-    gap: 1.75rem;
+    gap: 1.25rem;
     box-sizing: border-box;
   }
 `;
+
+function splitQuote(quote: string): { lead: string; rest: string } {
+  const match = quote.match(/^(.+?[.!?])\s+([\s\S]+)$/);
+  if (match) return { lead: match[1], rest: match[2] };
+  return { lead: quote, rest: "" };
+}
 
 export function TestimonialsFrame({
   testimonials,
@@ -45,12 +51,11 @@ export function TestimonialsFrame({
 
     const updateActive = () => {
       const cards = Array.from(track.querySelectorAll<HTMLElement>(".testimonial-card"));
-      const center = track.getBoundingClientRect().left + track.clientWidth / 2;
+      const trackLeft = track.getBoundingClientRect().left;
       let closest = 0;
       let minDist = Infinity;
       cards.forEach((card, i) => {
-        const r = card.getBoundingClientRect();
-        const dist = Math.abs(r.left + r.width / 2 - center);
+        const dist = Math.abs(card.getBoundingClientRect().left - trackLeft);
         if (dist < minDist) { minDist = dist; closest = i; }
       });
       setActive(closest);
@@ -100,57 +105,75 @@ export function TestimonialsFrame({
       </div>
 
       <div ref={trackRef} className="testimonial-track">
-        {items.map((t, i) => (
-          <div key={i} className="testimonial-card">
-            <span
-              style={{
-                fontFamily: "var(--font-display)",
-                fontSize: "3.5rem",
-                lineHeight: 1,
-                color: "var(--accent)",
-                opacity: 0.5,
-              }}
-            >
-              “
-            </span>
-            <p
-              style={{
-                fontFamily: "var(--font-display)",
-                fontSize: "clamp(1.5rem, 2.4vw, 2rem)",
-                lineHeight: 1.25,
-                fontWeight: 400,
-                letterSpacing: "-0.01em",
-                color: text,
-                marginTop: "-1.5rem",
-              }}
-            >
-              {t.quote}
-            </p>
-            <div style={{ display: "flex", flexDirection: "column", gap: "0.2rem" }}>
+        {items.map((t, i) => {
+          const { lead, rest } = splitQuote(t.quote);
+          return (
+            <div key={i} className="testimonial-card" style={{ opacity: i === active ? 1 : 0.35, transition: "opacity 0.35s ease" }}>
               <span
                 style={{
-                  fontFamily: "var(--font-sans)",
-                  fontSize: "0.8125rem",
-                  letterSpacing: "0.04em",
-                  color: text,
-                }}
-              >
-                {t.name}
-              </span>
-              <span
-                style={{
-                  fontFamily: "var(--font-sans)",
-                  fontSize: "0.75rem",
-                  letterSpacing: "0.04em",
-                  color: text,
+                  fontFamily: "var(--font-display)",
+                  fontSize: "3.5rem",
+                  lineHeight: 1,
+                  color: "var(--accent)",
                   opacity: 0.5,
                 }}
               >
-                {t.role}, {t.company}
+                &ldquo;
               </span>
+              <div style={{ display: "flex", flexDirection: "column", gap: "0.5rem", marginTop: "-1.5rem" }}>
+                <p
+                  style={{
+                    fontFamily: "var(--font-display)",
+                    fontSize: "clamp(2rem, 2.4vw, 2.5rem)",
+                    lineHeight: 1.2,
+                    fontWeight: 400,
+                    letterSpacing: "-0.01em",
+                    color: text,
+                  }}
+                >
+                  {lead}
+                </p>
+                {rest && (
+                  <p
+                    style={{
+                      fontFamily: "var(--font-sans)",
+                      fontSize: "clamp(1.125rem, 1.2vw, 1.25rem)",
+                      lineHeight: 1.6,
+                      fontWeight: 300,
+                      color: text,
+                      opacity: 0.6,
+                    }}
+                  >
+                    {rest}
+                  </p>
+                )}
+              </div>
+              <div style={{ display: "flex", flexDirection: "column", gap: "0.2rem" }}>
+                <span
+                  style={{
+                    fontFamily: "var(--font-sans)",
+                    fontSize: "0.8125rem",
+                    letterSpacing: "0.04em",
+                    color: text,
+                  }}
+                >
+                  {t.name}
+                </span>
+                <span
+                  style={{
+                    fontFamily: "var(--font-sans)",
+                    fontSize: "0.75rem",
+                    letterSpacing: "0.04em",
+                    color: text,
+                    opacity: 0.5,
+                  }}
+                >
+                  {t.role}, {t.company}
+                </span>
+              </div>
             </div>
-          </div>
-        ))}
+          );
+        })}
       </div>
 
       <div
