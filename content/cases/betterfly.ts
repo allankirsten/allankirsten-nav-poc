@@ -1,6 +1,7 @@
 import type { CaseContent } from "../types";
 
 export const betterflyContent: CaseContent = {
+  heroImage: "/maserati.jpg",
   hero: {
     title: "Betterfly.",
     meta: [
@@ -26,6 +27,7 @@ export const betterflyContent: CaseContent = {
 
 There was no design system, no research practice, and no shared language between design and product. I was brought in to build that foundation while simultaneously delivering on a roadmap that didn't slow down for anyone.`,
       visual: "Platform overview",
+      visualSrc: "/images/betterfly-01.png",
     },
     {
       label: "02 — The Work",
@@ -36,6 +38,7 @@ I structured the design system around the platform's core tension: enterprise-gr
 
 In parallel, I scaled the team. Defined roles, hiring criteria, and the rituals that keep a distributed design team aligned — from Brazil to Chile to Mexico.`,
       visual: "Design System tokens & components",
+      visualSrc: "/images/betterfly-02.png",
     },
     {
       label: "03 — Impact",

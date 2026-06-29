@@ -20,6 +20,8 @@ export const frames: Frame[] = [
     label: "03",
     title: "Two decades. Two exits. One craft.",
     sub: "Design as a multiplier.",
+    subHref: "/about",
+    cta: "My story →",
     bg: "#000", text: "#fff",
   },
   {
@@ -40,6 +42,7 @@ export const frames: Frame[] = [
     title: "Clarity. Velocity. Impact.",
     sub: "How I work, every time.",
     subHref: "/how-i-work",
+    cta: "See the method →",
     bg: "#000", text: "#fff",
   },
   {

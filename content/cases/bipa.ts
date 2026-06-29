@@ -1,6 +1,7 @@
 import type { CaseContent } from "../types";
 
 export const bipaContent: CaseContent = {
+  heroImage: "/maserati.jpg",
   hero: {
     title: "Bipa.",
     meta: [

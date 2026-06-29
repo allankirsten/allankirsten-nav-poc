@@ -3,6 +3,7 @@
 import { useEffect, useLayoutEffect } from "react";
 import gsap from "gsap";
 import { BackButton } from "@/components/BackButton";
+import { ImgFull } from "@/components/ImgFull";
 import type { CaseContent } from "@/content/types";
 
 const css = `
@@ -12,6 +13,9 @@ const css = `
     min-height: 100vh;
   }
   .case-hero {
+    position: relative;
+    z-index: 2;
+    background: #fff;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
@@ -82,6 +86,9 @@ const css = `
     line-height: 1.4;
   }
   .case-body {
+    position: relative;
+    z-index: 2;
+    background: #fff;
     padding: clamp(4rem, 8vw, 8rem) clamp(1.5rem, 6vw, 6rem);
     display: flex;
     flex-direction: column;
@@ -109,6 +116,14 @@ const css = `
     color: #555;
     white-space: pre-line;
   }
+  .case-visual-img {
+    display: block;
+    width: 100%;
+    height: auto;
+    margin-top: 3rem;
+    border: 1px solid #e8e8e8;
+    border-radius: 3px;
+  }
   .case-placeholder {
     background: #f7f7f7;
     border: 1px solid #e5e5e5;
@@ -125,6 +140,9 @@ const css = `
     color: #ccc;
   }
   .case-footer {
+    position: relative;
+    z-index: 2;
+    background: #fff;
     border-top: 1px solid #e5e5e5;
     padding: clamp(3rem, 6vw, 6rem) clamp(1.5rem, 6vw, 6rem);
   }
@@ -137,14 +155,14 @@ const css = `
 `;
 
 export function CasePage({ content }: { content: CaseContent }) {
-  const { hero, metrics, sections, cta } = content;
+  const { hero, heroImage, metrics, sections, cta } = content;
 
   useLayoutEffect(() => {
     window.scrollTo(0, 0);
   }, []);
 
   useEffect(() => {
-    const tl = gsap.timeline({ repeat: -1, repeatDelay: 1.5 });
+    const tl = gsap.timeline();
 
     tl.fromTo(".case-title", { opacity: 0, y: 40 },
       { opacity: 1, y: 0, duration: 0.9, ease: "power3.out" }, 0);
@@ -210,6 +228,8 @@ export function CasePage({ content }: { content: CaseContent }) {
         </div>
       </section>
 
+      <ImgFull src={heroImage} />
+
       <div className="case-body">
         {sections.map((s, i) => (
           <div key={i}>
@@ -218,11 +238,17 @@ export function CasePage({ content }: { content: CaseContent }) {
               <h2 className="section-heading">{s.heading}</h2>
               <p className="section-body">{s.body}</p>
             </div>
-            {s.visual && (
+            {s.visualSrc ? (
+              <img
+                src={s.visualSrc}
+                alt={s.visual ?? ""}
+                className="case-visual-img"
+              />
+            ) : s.visual ? (
               <div className="case-placeholder">
                 <span className="case-placeholder-label">Visual — {s.visual}</span>
               </div>
-            )}
+            ) : null}
           </div>
         ))}
       </div>

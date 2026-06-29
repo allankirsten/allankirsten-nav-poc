@@ -1,6 +1,7 @@
 import type { CaseContent } from "../types";
 
 export const remessaContent: CaseContent = {
+  heroImage: "/maserati.jpg",
   hero: {
     title: "Remessa\nOnline.",
     meta: [
@@ -26,6 +27,7 @@ export const remessaContent: CaseContent = {
 
 The mission was clear: make the product scale without losing quality. That meant solving both the near-term UX problems and the underlying structural ones — simultaneously.`,
       visual: "Onboarding flow mapping",
+      visualSrc: "/images/remessa-01.jpg",
     },
     {
       label: "02 — The Work",
@@ -36,6 +38,7 @@ After fixing the flow, I turned to the foundation. I built Remessa's first Desig
 
 The system reduced delivery time on new interfaces by 60%. More importantly, it gave the engineering team a shared language with design, which changed how we collaborated.`,
       visual: "Design System components",
+      visualSrc: "/images/remessa-02.jpg",
     },
     {
       label: "03 — Scale",

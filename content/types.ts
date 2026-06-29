@@ -4,6 +4,7 @@ export type Frame = {
   title: string;
   sub: string;
   subHref?: string;
+  cta?: string;          // label do botão pill quando subHref está presente
   bg: string;
   text: string;
   links?: Record<string, string>;
@@ -21,7 +22,8 @@ export type CaseSection = {
   label: string;
   heading: string;
   body: string;
-  visual?: string; // if set, renders a placeholder block after the section
+  visual?: string;    // descriptive label; renders placeholder if no visualSrc
+  visualSrc?: string; // image path; renders real image when set
 };
 
 export type CaseContent = {
@@ -30,6 +32,7 @@ export type CaseContent = {
     meta: { label: string; value: string }[];
     tagline: string;
   };
+  heroImage?: string;     // path or URL; renders dark placeholder if omitted
   metrics: CaseMetric[];
   sections: CaseSection[];
   cta: string;

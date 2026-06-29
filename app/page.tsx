@@ -199,6 +199,7 @@ export default function Home() {
       const words = frameEl.querySelectorAll<HTMLElement>(".word");
       const subChars = frameEl.querySelectorAll<HTMLElement>(".sub-char");
       const subDelays = getSubCharDelays(frame.sub);
+      const ctaEl = frameEl.querySelector<HTMLElement>(".frame-cta");
 
       if (!words.length) return;
 
@@ -212,6 +213,7 @@ export default function Home() {
         if (subChars.length) gsap.set(subChars, { opacity: 1, y: 0 });
         if (labelEl) gsap.set(labelEl, { opacity: 1, y: 0 });
         if (cueEl) gsap.set(cueEl, { opacity: 1, y: 0 });
+        if (ctaEl) gsap.set(ctaEl, { opacity: 1, y: 0 });
         return;
       }
 
@@ -247,6 +249,10 @@ export default function Home() {
       });
       if (subChars.length) gsap.fromTo(subChars, { opacity: 0, y: 12 }, {
         opacity: 1, y: 0, stagger: (idx: number) => subDelays[idx], duration: 0.6, ease: "power2.out", delay: wordDelay,
+        scrollTrigger: { start: frameStart - 120, end: frameStart + fh * 0.25, toggleActions: "play none none none" },
+      });
+      if (ctaEl) gsap.fromTo(ctaEl, { opacity: 0, y: 12 }, {
+        opacity: 1, y: 0, duration: 0.5, ease: "power2.out", delay: wordDelay + 0.3,
         scrollTrigger: { start: frameStart - 120, end: frameStart + fh * 0.25, toggleActions: "play none none none" },
       });
     });
@@ -313,28 +319,17 @@ export default function Home() {
         <div
           key={frame.id}
           id={frame.id}
-          style={
-            i === 0
-              ? {
-                  position: "sticky",
-                  top: 0,
-                  height: "100dvh",
-                  background: frame.bg,
-                  zIndex: i + 1,
-                  display: "flex",
-                }
-              : {
-                  position: "sticky",
-                  top: 0,
-                  height: "100dvh",
-                  background: frame.bg,
-                  zIndex: i + 1,
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "flex-start",
-                  paddingLeft: "clamp(1.5rem, 6vw, 6rem)",
-                }
-          }
+          style={{
+            position: "sticky",
+            top: 0,
+            height: "100dvh",
+            background: frame.bg,
+            zIndex: i + 1,
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "flex-start",
+            paddingLeft: "clamp(1.5rem, 6vw, 6rem)",
+          }}
         >
           {i === 0 ? (
             <div
@@ -344,16 +339,14 @@ export default function Home() {
                 zIndex: 10,
                 display: "flex",
                 flexDirection: "column",
-                justifyContent: "space-between",
-                height: "100%",
+                alignItems: "flex-start",
                 width: "100%",
+                maxWidth: "80ch",
                 boxSizing: "border-box",
                 willChange: "transform",
-                padding: "clamp(1.5rem, 4vw, 3rem) clamp(1.5rem, 6vw, 6rem)",
               }}
             >
-              {/* Band 1 — label */}
-              <div className="hero-label">
+              <div className="hero-label" style={{ marginBottom: "1.5rem" }}>
                 <span
                   style={{
                     fontFamily: "var(--font-sans)",
@@ -368,26 +361,22 @@ export default function Home() {
                 </span>
               </div>
 
-              {/* Band 2 — title */}
-              <div style={{ display: "flex", alignItems: "center", flex: 1, minHeight: 0 }}>
-                <h2
-                  style={{
-                    fontFamily: "var(--font-display)",
-                    fontSize: "var(--text-display)",
-                    lineHeight: "var(--text-display--line-height)",
-                    fontWeight: 400,
-                    color: frame.text,
-                    letterSpacing: "-0.01em",
-                    maxWidth: "14ch",
-                    textAlign: "left",
-                  }}
-                >
-                  {renderTitleWords(frame, saveScroll)}
-                </h2>
-              </div>
+              <h2
+                style={{
+                  fontFamily: "var(--font-display)",
+                  fontSize: "var(--text-display)",
+                  lineHeight: "var(--text-display--line-height)",
+                  fontWeight: 400,
+                  color: frame.text,
+                  letterSpacing: "-0.01em",
+                  maxWidth: "14ch",
+                  textAlign: "left",
+                }}
+              >
+                {renderTitleWords(frame, saveScroll)}
+              </h2>
 
-              {/* Band 3 — tagline + scroll cue */}
-              <div style={{ display: "flex", alignItems: "flex-end", justifyContent: "space-between", gap: "1rem" }}>
+              <div style={{ display: "flex", alignItems: "center", gap: "1rem", marginTop: "2rem" }}>
                 <p
                   className="frame-sub"
                   style={{
@@ -461,46 +450,45 @@ export default function Home() {
                 {renderTitleWords(frame, saveScroll)}
               </h2>
 
-              {frame.subHref ? (
+              <p
+                className="frame-sub"
+                style={{
+                  fontFamily: "var(--font-sans)",
+                  fontSize: "var(--text-caption)",
+                  fontWeight: 300,
+                  letterSpacing: "0.1em",
+                  textTransform: "uppercase",
+                  color: frame.text,
+                  opacity: 0.5,
+                  marginTop: "2rem",
+                  textAlign: "left",
+                }}
+              >
+                {renderChars(frame.sub)}
+              </p>
+
+              {frame.subHref && frame.cta && (
                 <Link
                   href={frame.subHref}
                   onClick={saveScroll}
-                  className="frame-sub"
+                  className="frame-cta"
                   style={{
+                    display: "inline-flex",
+                    alignItems: "center",
+                    marginTop: "1.5rem",
+                    padding: "0.65rem 1.5rem",
+                    borderRadius: "999px",
+                    border: `1px solid ${frame.text === "#fff" ? "rgba(255,255,255,0.3)" : "rgba(0,0,0,0.2)"}`,
                     fontFamily: "var(--font-sans)",
-                    fontSize: "var(--text-caption)",
-                    fontWeight: 300,
-                    letterSpacing: "0.1em",
-                    textTransform: "uppercase",
+                    fontSize: "0.8125rem",
+                    letterSpacing: "0.04em",
                     color: frame.text,
-                    opacity: 0.5,
-                    marginTop: "2rem",
-                    textAlign: "left",
-                    display: "block",
-                    textDecoration: "underline",
-                    textDecorationThickness: "0.04em",
-                    textUnderlineOffset: "0.2em",
+                    textDecoration: "none",
+                    background: "transparent",
                   }}
                 >
-                  {renderChars(frame.sub)}
+                  {frame.cta}
                 </Link>
-              ) : (
-                <p
-                  className="frame-sub"
-                  style={{
-                    fontFamily: "var(--font-sans)",
-                    fontSize: "var(--text-caption)",
-                    fontWeight: 300,
-                    letterSpacing: "0.1em",
-                    textTransform: "uppercase",
-                    color: frame.text,
-                    opacity: 0.5,
-                    marginTop: "2rem",
-                    textAlign: "left",
-                  }}
-                >
-                  {renderChars(frame.sub)}
-                </p>
               )}
             </div>
           )}
