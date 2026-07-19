@@ -7,23 +7,29 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { frames } from "@/content/frames";
 import { brands } from "@/content/brands";
 import { testimonials } from "@/content/testimonials";
+import { workItems } from "@/content/work";
 import { TestimonialsFrame } from "@/components/TestimonialsFrame";
 import { ContactFrame } from "@/components/ContactFrame";
+import { WorkFrame } from "@/components/WorkFrame";
 import { BrandsMarquee } from "@/components/BrandsMarquee";
-import type { Frame, Testimonial } from "@/content/types";
+import type { Frame, Testimonial, WorkItem } from "@/content/types";
 
 type HomeSection =
   | { kind: "frame"; frame: Frame }
   | { kind: "brands"; id: string; bg: string }
   | { kind: "testimonials"; id: string; label: string; bg: string; text: string; testimonials: Testimonial[] }
+  | { kind: "work"; id: string; label: string; bg: string; text: string; items: WorkItem[] }
   | { kind: "contact"; id: string; label: string; bg: string; text: string };
 
 const provIdx = frames.findIndex((f) => f.id === "provocacao");
+const identIdx = frames.findIndex((f) => f.id === "identidade");
 const credIdx = frames.findIndex((f) => f.id === "credibilidade");
 const homeSections: HomeSection[] = [
   ...frames.slice(0, provIdx + 1).map((frame) => ({ kind: "frame" as const, frame })),
   { kind: "brands" as const, id: "marcas", bg: "#111" },
-  ...frames.slice(provIdx + 1, credIdx + 1).map((frame) => ({ kind: "frame" as const, frame })),
+  ...frames.slice(provIdx + 1, identIdx + 1).map((frame) => ({ kind: "frame" as const, frame })),
+  { kind: "work" as const, id: "prova", label: "04", bg: "#fff", text: "#000", items: workItems },
+  ...frames.slice(identIdx + 1, credIdx + 1).map((frame) => ({ kind: "frame" as const, frame })),
   { kind: "testimonials" as const, id: "depoimentos", label: "07", bg: "#000", text: "#fff", testimonials },
   ...frames.slice(credIdx + 1).map((frame) => ({ kind: "frame" as const, frame })),
   { kind: "contact" as const, id: "contato", label: "09", bg: "#fff", text: "#000" },
@@ -74,10 +80,10 @@ function renderTitleWords(frame: Frame, onLinkClick: () => void) {
   return segments.map((seg, si) => {
     const wordSpans = seg.words.map((w) => {
       const idx = globalIdx++;
-      const mr = idx < totalWords - 1 ? "0.28em" : 0;
+      const text = idx < totalWords - 1 ? w + " " : w;
       return (
-        <span key={idx} className="word" style={{ display: "inline-block", marginRight: mr }}>
-          {w}
+        <span key={idx} className="word" style={{ display: "inline-block", whiteSpace: "pre" }}>
+          {text}
         </span>
       );
     });
@@ -131,11 +137,6 @@ export default function Home() {
     const vh = window.innerHeight;
     document.documentElement.style.setProperty("--frame-h", `${vh}px`);
 
-    const savedRaw = sessionStorage.getItem(SCROLL_KEY);
-    const restoringScroll = savedRaw !== null;
-    const targetY = restoringScroll ? parseInt(savedRaw!, 10) : 0;
-    if (restoringScroll) sessionStorage.removeItem(SCROLL_KEY);
-
     // Measure actual rendered heights so scroll triggers work with flexible containers
     const frameTops: number[] = [];
     let cumulative = 0;
@@ -144,6 +145,19 @@ export default function Home() {
       frameTops.push(cumulative);
       cumulative += document.getElementById(id)?.offsetHeight ?? vh;
     });
+
+    // A URL hash (e.g. nav link to /#prova from another page) jumps straight to that frame,
+    // same as restoring a saved scroll position — the sticky-frame layout isn't ready
+    // for the browser's native hash-scroll until heights are measured above.
+    const savedRaw = sessionStorage.getItem(SCROLL_KEY);
+    const hashId = window.location.hash.slice(1);
+    const hashIndex = hashId
+      ? homeSections.findIndex((s) => (s.kind === "frame" ? s.frame.id : s.id) === hashId)
+      : -1;
+
+    const restoringScroll = savedRaw !== null || hashIndex !== -1;
+    const targetY = savedRaw !== null ? parseInt(savedRaw, 10) : hashIndex !== -1 ? frameTops[hashIndex] : 0;
+    if (savedRaw !== null) sessionStorage.removeItem(SCROLL_KEY);
 
     homeSections.forEach((section, i) => {
       const sectionId = section.kind === "frame" ? section.frame.id : section.id;
@@ -203,6 +217,32 @@ export default function Home() {
         });
         if (pills.length) gsap.fromTo(pills, { opacity: 0, y: 20 }, {
           opacity: 1, y: 0, duration: 0.7, ease: "power3.out", stagger: 0.1, delay: 0.25,
+          scrollTrigger: { start: frameStart - 120, end: frameStart + frameHeight * 0.25, toggleActions: "play none none none" },
+        });
+
+        return;
+      }
+
+      if (section.kind === "work") {
+        const label = frameEl.querySelector<HTMLElement>(".frame-label");
+        const heading = frameEl.querySelector<HTMLElement>(".work-heading");
+        const rows = frameEl.querySelectorAll<HTMLElement>(".work-row");
+
+        if (alreadyPast) {
+          gsap.set([label, heading, ...Array.from(rows)], { opacity: 1, y: 0 });
+          return;
+        }
+
+        if (label) gsap.fromTo(label, { opacity: 0, y: 20 }, {
+          opacity: 1, y: 0, duration: 0.7, ease: "power2.out",
+          scrollTrigger: { start: frameStart - 120, end: frameStart + frameHeight * 0.25, toggleActions: "play none none none" },
+        });
+        if (heading) gsap.fromTo(heading, { opacity: 0, y: 30 }, {
+          opacity: 1, y: 0, duration: 0.9, ease: "power3.out", delay: 0.1,
+          scrollTrigger: { start: frameStart - 120, end: frameStart + frameHeight * 0.25, toggleActions: "play none none none" },
+        });
+        if (rows.length) gsap.fromTo(rows, { opacity: 0, y: 24 }, {
+          opacity: 1, y: 0, duration: 0.7, ease: "power3.out", stagger: 0.1, delay: 0.3,
           scrollTrigger: { start: frameStart - 120, end: frameStart + frameHeight * 0.25, toggleActions: "play none none none" },
         });
 
@@ -296,7 +336,7 @@ export default function Home() {
               style={{
                 position: "sticky",
                 top: 0,
-                minHeight: "100dvh",
+                minHeight: "70dvh",
                 background: section.bg,
                 zIndex: i + 1,
                 display: "flex",
@@ -347,11 +387,34 @@ export default function Home() {
                 display: "flex",
                 alignItems: "center",
                 justifyContent: "flex-start",
-                padding: "clamp(5rem, 16vw, 14rem) clamp(1.5rem, 6vw, 6rem)",
+                padding: "clamp(5rem, 16vw, 14rem) var(--section-px)",
                 boxSizing: "border-box",
               }}
             >
               <ContactFrame label={section.label} text={section.text} />
+            </div>
+          );
+        }
+
+        if (section.kind === "work") {
+          return (
+            <div
+              key={section.id}
+              id={section.id}
+              style={{
+                position: "sticky",
+                top: 0,
+                minHeight: "100dvh",
+                background: section.bg,
+                zIndex: i + 1,
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "flex-start",
+                padding: "clamp(5rem, 16vw, 14rem) var(--section-px)",
+                boxSizing: "border-box",
+              }}
+            >
+              <WorkFrame items={section.items} label={section.label} text={section.text} onLinkClick={saveScroll} />
             </div>
           );
         }
@@ -370,7 +433,7 @@ export default function Home() {
             display: "flex",
             alignItems: "center",
             justifyContent: "flex-start",
-            padding: "clamp(5rem, 16vw, 14rem) clamp(1.5rem, 6vw, 6rem)",
+            padding: "clamp(5rem, 16vw, 14rem) var(--section-px)",
             boxSizing: "border-box",
           }}
         >
@@ -417,6 +480,21 @@ export default function Home() {
                 {renderTitleWords(frame, saveScroll)}
               </h2>
 
+              <p
+                style={{
+                  fontFamily: "var(--font-sans)",
+                  fontSize: "var(--text-caption)",
+                  fontWeight: 300,
+                  letterSpacing: "0.08em",
+                  textTransform: "uppercase",
+                  color: frame.text,
+                  opacity: 0.6,
+                  marginTop: "1.25rem",
+                }}
+              >
+                Allan Kirsten&apos;s Portfolio 2026
+              </p>
+
               <div style={{ display: "flex", alignItems: "center", gap: "1rem", marginTop: "2rem" }}>
                 <p
                   className="frame-sub"
@@ -433,17 +511,6 @@ export default function Home() {
                 >
                   {renderChars(frame.sub)}
                 </p>
-                <span
-                  className="scroll-cue"
-                  style={{
-                    fontSize: "1.25rem",
-                    color: frame.text,
-                    opacity: 0.5,
-                    lineHeight: 1,
-                  }}
-                >
-                  ↓
-                </span>
               </div>
             </div>
           ) : (
@@ -510,23 +577,13 @@ export default function Home() {
                 <Link
                   href={frame.subHref}
                   onClick={saveScroll}
-                  className="frame-cta"
-                  style={{
-                    display: "inline-flex",
-                    alignItems: "center",
-                    marginTop: "1.5rem",
-                    padding: "0.65rem 1.5rem",
-                    borderRadius: "999px",
-                    border: `1px solid ${frame.text === "#fff" ? "rgba(255,255,255,0.3)" : "rgba(0,0,0,0.2)"}`,
-                    fontFamily: "var(--font-sans)",
-                    fontSize: "0.8125rem",
-                    letterSpacing: "0.04em",
-                    color: frame.text,
-                    textDecoration: "none",
-                    background: "transparent",
-                  }}
+                  className={`frame-cta cta-underline${frame.text === "#000" ? " cta-underline--light" : ""}`}
+                  style={{ marginTop: "1.5rem" }}
                 >
                   {frame.cta}
+                  <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+                    <path d="M3 11L11 3M11 3H5M11 3V9" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round" />
+                  </svg>
                 </Link>
               )}
             </div>

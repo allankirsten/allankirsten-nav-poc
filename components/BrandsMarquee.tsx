@@ -5,96 +5,95 @@ import { useRef, useEffect } from "react";
 const css = `
   .brands-band {
     width: 100%;
-    overflow-x: scroll;
-    overflow-y: hidden;
+    overflow: hidden;
     cursor: grab;
-    -webkit-overflow-scrolling: touch;
   }
   .brands-band:active { cursor: grabbing; }
-  .brands-band::-webkit-scrollbar { display: none; }
-  .brands-band { scrollbar-width: none; }
   .brands-track {
     display: flex;
     align-items: center;
     width: max-content;
     padding: 1.5rem 0;
     user-select: none;
+    will-change: transform;
   }
   .brand-item {
-    font-family: var(--font-sans);
-    font-size: 0.6875rem;
-    letter-spacing: 0.18em;
-    text-transform: uppercase;
-    color: rgba(255,255,255,0.28);
-    white-space: nowrap;
+    display: block;
+    height: 2.5rem;
+    width: auto;
     flex-shrink: 0;
-    padding: 0 3.5rem;
+    margin: 0 5.5rem;
+    opacity: 0.55;
+    -webkit-user-drag: none;
   }
 `;
 
-const SPEED = 0.6;
+const SPEED_DESKTOP = 0.6;
+const SPEED_MOBILE = 1.4;
+const MOBILE_QUERY = "(max-width: 768px)";
 
-export function BrandsMarquee({ brands }: { brands: string[] }) {
+type Brand = { name: string; src: string; ratio: number };
+
+const wrap = (value: number, max: number) => ((value % max) + max) % max;
+
+export function BrandsMarquee({ brands }: { brands: Brand[] }) {
   const bandRef = useRef<HTMLDivElement>(null);
+  const trackRef = useRef<HTMLDivElement>(null);
   const rafRef = useRef<number>(0);
   const dragging = useRef(false);
   const dragStartX = useRef(0);
-  const dragScrollLeft = useRef(0);
+  const dragBasePos = useRef(0);
   const posRef = useRef(0);
 
-  const doubled = [...brands, ...brands, ...brands, ...brands];
+  const doubled = [...brands, ...brands];
 
   useEffect(() => {
     const band = bandRef.current;
-    if (!band) return;
+    const track = trackRef.current;
+    if (!band || !track) return;
+
+    const mql = window.matchMedia(MOBILE_QUERY);
+    let speed = mql.matches ? SPEED_MOBILE : SPEED_DESKTOP;
+    const onChange = (e: MediaQueryListEvent) => {
+      speed = e.matches ? SPEED_MOBILE : SPEED_DESKTOP;
+    };
+    mql.addEventListener("change", onChange);
 
     const tick = () => {
+      const half = track.scrollWidth / 2;
       if (!dragging.current) {
-        posRef.current += SPEED;
-        const half = band.scrollWidth / 2;
-        if (posRef.current >= half) posRef.current = 0;
-        band.scrollLeft = posRef.current;
+        posRef.current = wrap(posRef.current + speed, half);
       }
+      track.style.transform = `translate3d(${-posRef.current}px,0,0)`;
       rafRef.current = requestAnimationFrame(tick);
     };
 
     rafRef.current = requestAnimationFrame(tick);
-    return () => cancelAnimationFrame(rafRef.current);
+    return () => {
+      cancelAnimationFrame(rafRef.current);
+      mql.removeEventListener("change", onChange);
+    };
   }, []);
 
-  const onMouseDown = (e: React.MouseEvent) => {
+  const startDrag = (x: number) => {
     dragging.current = true;
-    dragStartX.current = e.pageX;
-    dragScrollLeft.current = bandRef.current!.scrollLeft;
-    posRef.current = bandRef.current!.scrollLeft;
+    dragStartX.current = x;
+    dragBasePos.current = posRef.current;
   };
 
-  const onMouseMove = (e: React.MouseEvent) => {
-    if (!dragging.current) return;
-    const delta = dragStartX.current - e.pageX;
-    const next = dragScrollLeft.current + delta;
-    bandRef.current!.scrollLeft = next;
-    posRef.current = bandRef.current!.scrollLeft;
+  const moveDrag = (x: number) => {
+    if (!dragging.current || !trackRef.current) return;
+    const half = trackRef.current.scrollWidth / 2;
+    const delta = dragStartX.current - x;
+    posRef.current = wrap(dragBasePos.current + delta, half);
   };
 
-  const onMouseUp = () => { dragging.current = false; };
+  const endDrag = () => { dragging.current = false; };
 
-  const onTouchStart = (e: React.TouchEvent) => {
-    dragging.current = true;
-    dragStartX.current = e.touches[0].pageX;
-    dragScrollLeft.current = bandRef.current!.scrollLeft;
-    posRef.current = bandRef.current!.scrollLeft;
-  };
-
-  const onTouchMove = (e: React.TouchEvent) => {
-    if (!dragging.current) return;
-    const delta = dragStartX.current - e.touches[0].pageX;
-    const next = dragScrollLeft.current + delta;
-    bandRef.current!.scrollLeft = next;
-    posRef.current = bandRef.current!.scrollLeft;
-  };
-
-  const onTouchEnd = () => { dragging.current = false; };
+  const onMouseDown = (e: React.MouseEvent) => startDrag(e.pageX);
+  const onMouseMove = (e: React.MouseEvent) => moveDrag(e.pageX);
+  const onTouchStart = (e: React.TouchEvent) => startDrag(e.touches[0].pageX);
+  const onTouchMove = (e: React.TouchEvent) => moveDrag(e.touches[0].pageX);
 
   return (
     <>
@@ -104,15 +103,22 @@ export function BrandsMarquee({ brands }: { brands: string[] }) {
         className="brands-band"
         onMouseDown={onMouseDown}
         onMouseMove={onMouseMove}
-        onMouseUp={onMouseUp}
-        onMouseLeave={onMouseUp}
+        onMouseUp={endDrag}
+        onMouseLeave={endDrag}
         onTouchStart={onTouchStart}
         onTouchMove={onTouchMove}
-        onTouchEnd={onTouchEnd}
+        onTouchEnd={endDrag}
       >
-        <div className="brands-track">
+        <div ref={trackRef} className="brands-track">
           {doubled.map((brand, i) => (
-            <span key={i} className="brand-item">{brand}</span>
+            <img
+              key={i}
+              className="brand-item"
+              src={brand.src}
+              alt={brand.name}
+              style={{ width: `calc(2.5rem * ${brand.ratio})` }}
+              draggable={false}
+            />
           ))}
         </div>
       </div>

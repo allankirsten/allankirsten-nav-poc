@@ -4,7 +4,7 @@ export type Frame = {
   title: string;
   sub: string;
   subHref?: string;
-  cta?: string;          // label do botão pill quando subHref está presente
+  cta?: string;          // label do link (underline + arrow) quando subHref está presente
   bg: string;
   text: string;
   links?: Record<string, string>;
@@ -63,4 +63,10 @@ export type Testimonial = {
   name: string;
   role: string;
   company: string;
+};
+
+export type WorkItem = {
+  slug: string;
+  name: string;
+  tagline: string;
 };

@@ -1,160 +1,285 @@
 "use client";
 
 import { useRef, useState, useEffect } from "react";
+import Image from "next/image";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
 import gsap from "gsap";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
-
-gsap.registerPlugin(ScrollTrigger);
 
 const NAV_LINKS = [
-  { label: "Início",      href: "#abertura",                      color: "#E07B5A" },
-  { label: "Trajetória",  href: "#identidade",                    color: "#5A7BE0" },
-  { label: "Casos",       href: "#prova",                         color: "#5ABA8A" },
-  { label: "Método",      href: "#metodo",                        color: "#C8A96E" },
-  { label: "Conversar",   href: "mailto:allankirsten@gmail.com",  color: "#B05AB5" },
+  { label: "Home", href: "/" },
+  { label: "Work", href: "/#prova" },
+  { label: "Method", href: "/how-i-work" },
+  { label: "About", href: "/about" },
+  { label: "Contact", href: "mailto:allankirsten@gmail.com" },
 ];
+
+type BgTheme = "dark" | "light";
+
+const THEMES: Record<BgTheme, { bg: (a: number) => string; border: string; text: string; active: string }> = {
+  dark: {
+    bg: (a) => `rgba(0, 0, 0, ${a})`,
+    border: "rgba(245, 240, 232, 0.08)",
+    text: "#F5F0E8",
+    active: "#C8A96E",
+  },
+  light: {
+    bg: (a) => `rgba(255, 255, 255, ${a})`,
+    border: "rgba(13, 13, 13, 0.08)",
+    text: "#141210",
+    active: "#8A6A32",
+  },
+};
+
+// Luminance of the color sitting right behind the header, sampled from the DOM —
+// lets the bar flip light/dark as the page scrolls past differently colored sections.
+function readBgTheme(sampleY: number): BgTheme {
+  const el = document.elementFromPoint(window.innerWidth / 2, sampleY);
+  let node: Element | null = el;
+  while (node) {
+    const bg = getComputedStyle(node).backgroundColor;
+    const m = bg.match(/[\d.]+/g);
+    if (m && m.length >= 3 && (m.length < 4 || Number(m[3]) > 0)) {
+      const [r, g, b] = m.map(Number);
+      const luminance = (0.299 * r + 0.587 * g + 0.114 * b) / 255;
+      return luminance > 0.5 ? "light" : "dark";
+    }
+    node = node.parentElement;
+  }
+  return "dark";
+}
+
+function NavLink({
+  href,
+  label,
+  active,
+  theme,
+  onClick,
+  mobile = false,
+}: {
+  href: string;
+  label: string;
+  active: boolean;
+  theme: BgTheme;
+  onClick?: () => void;
+  mobile?: boolean;
+}) {
+  const t = THEMES[theme];
+  return (
+    <Link
+      href={href}
+      onClick={onClick}
+      style={{
+        fontFamily: "var(--font-sans)",
+        fontSize: mobile ? "1rem" : "0.8125rem",
+        fontWeight: 500,
+        letterSpacing: "0.08em",
+        textTransform: "uppercase",
+        color: active ? t.active : t.text,
+        opacity: active ? 1 : 0.75,
+        textDecoration: "none",
+        transition: "opacity 0.2s ease, color 0.2s ease",
+        ...(mobile ? { padding: "0.85rem 0", borderBottom: `1px solid ${t.border}`, display: "block" } : {}),
+      }}
+      onMouseEnter={(e) => {
+        (e.currentTarget as HTMLElement).style.color = t.active;
+        (e.currentTarget as HTMLElement).style.opacity = "1";
+      }}
+      onMouseLeave={(e) => {
+        (e.currentTarget as HTMLElement).style.color = active ? t.active : t.text;
+        (e.currentTarget as HTMLElement).style.opacity = active ? "1" : "0.75";
+      }}
+    >
+      {label}
+    </Link>
+  );
+}
 
 export function Navigation() {
   const [isOpen, setIsOpen] = useState(false);
-  const navRef = useRef<HTMLElement>(null);
+  const [scrolled, setScrolled] = useState(false);
+  const [bgTheme, setBgTheme] = useState<BgTheme>("dark");
+  const headerRef = useRef<HTMLElement>(null);
   const overlayRef = useRef<HTMLDivElement>(null);
-  const linksRef = useRef<HTMLAnchorElement[]>([]);
+  const linkRefs = useRef<(HTMLAnchorElement | null)[]>([]);
+  const pathname = usePathname();
 
-  // Appear after scrolling past first frame
   useEffect(() => {
-    const ctx = gsap.context(() => {
-      gsap.set(navRef.current, { opacity: 0, pointerEvents: "none" });
+    const update = () => {
+      setScrolled(window.scrollY > 40);
+      if (isOpen) return; // fullscreen overlay covers the sample point while open — keep last reading
+      const sampleY = (headerRef.current?.offsetHeight ?? 68) + 6;
+      setBgTheme(readBgTheme(sampleY));
+    };
+    update();
+    window.addEventListener("scroll", update, { passive: true });
+    window.addEventListener("resize", update);
+    return () => {
+      window.removeEventListener("scroll", update);
+      window.removeEventListener("resize", update);
+    };
+  }, [pathname, isOpen]);
 
-      ScrollTrigger.create({
-        trigger: "#abertura",
-        start: "bottom 75%",
-        onEnter: () => {
-          gsap.to(navRef.current, {
-            opacity: 1,
-            pointerEvents: "auto",
-            duration: 0.6,
-            ease: "power2.out",
-          });
-        },
-        onLeaveBack: () => {
-          gsap.to(navRef.current, {
-            opacity: 0,
-            pointerEvents: "none",
-            duration: 0.4,
-          });
-        },
-      });
-    });
+  // Lock body scroll while the fullscreen overlay is open.
+  useEffect(() => {
+    if (!isOpen) return;
+    const prevOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    return () => {
+      document.body.style.overflow = prevOverflow;
+    };
+  }, [isOpen]);
 
-    return () => ctx.revert();
-  }, []);
+  // Entrance: overlay fades in, then links reveal with the same fade-up + stagger
+  // used for content entrance elsewhere on the site (home frames, /ai).
+  useEffect(() => {
+    if (!isOpen) return;
+    const overlay = overlayRef.current;
+    const links = linkRefs.current.filter((el): el is HTMLAnchorElement => Boolean(el));
+    if (!overlay) return;
 
-  const openMenu = () => {
-    setIsOpen(true);
-    gsap.set(overlayRef.current, { display: "flex", opacity: 0, scale: 0.98 });
-    gsap.set(linksRef.current, { y: 24, opacity: 0 });
-
-    gsap
-      .timeline()
-      .to(overlayRef.current, { opacity: 1, scale: 1, duration: 0.35, ease: "power2.out" })
-      .to(
-        linksRef.current,
-        { y: 0, opacity: 1, stagger: 0.07, duration: 0.35, ease: "power3.out" },
-        "-=0.15"
+    const tl = gsap.timeline();
+    tl.fromTo(overlay, { opacity: 0 }, { opacity: 1, duration: 0.45, ease: "power2.out" });
+    if (links.length) {
+      tl.fromTo(
+        links,
+        { opacity: 0, y: 28 },
+        { opacity: 1, y: 0, duration: 0.65, ease: "power3.out", stagger: 0.08 },
+        "-=0.25"
       );
-  };
+    }
+    return () => { tl.kill(); };
+  }, [isOpen]);
 
   const closeMenu = () => {
-    gsap
-      .timeline({
-        onComplete: () => {
-          setIsOpen(false);
-          gsap.set(overlayRef.current, { display: "none" });
-        },
-      })
-      .to(linksRef.current, {
-        y: -12,
-        opacity: 0,
-        stagger: { each: 0.05, from: "end" },
-        duration: 0.22,
-      })
-      .to(overlayRef.current, { opacity: 0, scale: 0.98, duration: 0.28 }, "-=0.1");
+    const overlay = overlayRef.current;
+    if (!overlay) { setIsOpen(false); return; }
+    gsap.to(overlay, { opacity: 0, duration: 0.25, ease: "power2.in", onComplete: () => setIsOpen(false) });
   };
 
+  const isActive = (href: string) => {
+    if (href.startsWith("mailto:") || href.includes("#")) return false;
+    return href === pathname;
+  };
+
+  const t = THEMES[bgTheme];
+
   return (
-    <>
-      {/* Hamburger trigger */}
-      <nav ref={navRef} className="fixed top-0 right-0 z-50 p-6">
-        <button
-          onClick={openMenu}
-          aria-label="Abrir menu"
-          className="flex flex-col gap-[5px] cursor-pointer"
-        >
-          <span
-            className="block w-6 h-px transition-colors"
-            style={{ background: "var(--text)" }}
-          />
-          <span
-            className="block w-4 h-px transition-colors"
-            style={{ background: "var(--text)" }}
-          />
-        </button>
+    <header
+      ref={headerRef}
+      style={{
+        position: "fixed",
+        top: 0,
+        left: 0,
+        right: 0,
+        zIndex: 200,
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "space-between",
+        padding: "1rem clamp(1.5rem, 6vw, 3rem)",
+        background: t.bg(scrolled ? 0.92 : 0.72),
+        backdropFilter: "blur(10px)",
+        transition: "background 0.3s ease",
+      }}
+    >
+      <Link href="/" aria-label="Allan Kirsten, home" style={{ display: "flex", alignItems: "center" }}>
+        <Image src="/logo-ak.png" alt="AK" width={36} height={36} priority style={{ borderRadius: "50%" }} />
+      </Link>
+
+      <nav className="hidden md:flex" style={{ alignItems: "center", gap: "2rem" }}>
+        {NAV_LINKS.map((link) => (
+          <NavLink key={link.href} href={link.href} label={link.label} active={isActive(link.href)} theme={bgTheme} />
+        ))}
       </nav>
 
-      {/* Fullscreen overlay */}
-      <div
-        ref={overlayRef}
+      <button
+        onClick={() => (isOpen ? closeMenu() : setIsOpen(true))}
+        aria-label={isOpen ? "Close menu" : "Open menu"}
+        className="flex md:hidden"
         style={{
-          display: "none",
-          background: "rgba(13, 13, 13, 0.96)",
-          backdropFilter: "blur(8px)",
-        }}
-        className="fixed inset-0 z-[100] flex-col items-center justify-center"
-        onClick={(e) => {
-          if (e.target === overlayRef.current) closeMenu();
+          position: "relative",
+          zIndex: 210,
+          width: "32px",
+          height: "32px",
+          cursor: "pointer",
+          background: "none",
+          border: "none",
+          padding: 0,
         }}
       >
-        {/* Close button */}
-        <button
-          onClick={closeMenu}
-          aria-label="Fechar menu"
-          className="absolute top-6 right-6 cursor-pointer"
-          style={{ color: "var(--text)", opacity: 0.5 }}
-        >
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
-            <line x1="18" y1="6" x2="6" y2="18" />
-            <line x1="6" y1="6" x2="18" y2="18" />
-          </svg>
-        </button>
+        <span
+          style={{
+            position: "absolute",
+            left: "5px",
+            right: "5px",
+            top: "50%",
+            height: "1px",
+            background: t.text,
+            transform: isOpen ? "translateY(0) rotate(45deg)" : "translateY(-4px) rotate(0deg)",
+            transition: "transform 0.3s cubic-bezier(0.65,0,0.35,1), background 0.2s ease",
+          }}
+        />
+        <span
+          style={{
+            position: "absolute",
+            left: "5px",
+            right: "5px",
+            top: "50%",
+            height: "1px",
+            background: t.text,
+            transform: isOpen ? "translateY(0) rotate(-45deg)" : "translateY(4px) rotate(0deg)",
+            transition: "transform 0.3s cubic-bezier(0.65,0,0.35,1), background 0.2s ease",
+          }}
+        />
+      </button>
 
-        {/* Links */}
-        <nav className="flex flex-col items-center gap-4 w-full px-8 max-w-2xl">
+      {isOpen && (
+        <div
+          ref={overlayRef}
+          className="md:hidden"
+          style={{
+            position: "fixed",
+            inset: 0,
+            height: "100dvh",
+            zIndex: 205,
+            background: t.bg(1),
+            display: "flex",
+            flexDirection: "column",
+            justifyContent: "center",
+            padding: "clamp(1.5rem, 6vw, 3rem)",
+            boxSizing: "border-box",
+            opacity: 0,
+          }}
+        >
           {NAV_LINKS.map((link, i) => (
-            <a
+            <Link
               key={link.href}
-              ref={(el) => { if (el) linksRef.current[i] = el; }}
               href={link.href}
               onClick={closeMenu}
-              className="w-full flex items-center px-8 py-5 rounded-2xl font-light tracking-widest uppercase transition-opacity duration-200"
+              ref={(el) => { linkRefs.current[i] = el; }}
               style={{
-                fontSize: "clamp(1.25rem, 3.5vw, 2.5rem)",
-                background: link.color,
-                color: "#0D0D0D",
-                letterSpacing: "0.1em",
-              }}
-              onMouseEnter={(e) => {
-                (e.currentTarget as HTMLElement).style.opacity = "0.85";
-              }}
-              onMouseLeave={(e) => {
-                (e.currentTarget as HTMLElement).style.opacity = "1";
+                fontFamily: "var(--font-display)",
+                fontSize: "clamp(2.25rem, 10vw, 3.25rem)",
+                fontWeight: 400,
+                letterSpacing: "-0.01em",
+                color: isActive(link.href) ? t.active : t.text,
+                textDecoration: "none",
+                display: "flex",
+                alignItems: "baseline",
+                gap: "1rem",
+                padding: "0.6rem 0",
+                borderBottom: `1px solid ${t.border}`,
+                opacity: 0,
               }}
             >
-              <span className="mr-4 text-xs opacity-50" style={{ fontSize: "0.65em" }}>0{i + 1}</span>
+              <span style={{ fontFamily: "var(--font-sans)", fontSize: "0.75rem", letterSpacing: "0.15em", opacity: 0.4 }}>
+                {String(i + 1).padStart(2, "0")}
+              </span>
               {link.label}
-            </a>
+            </Link>
           ))}
-        </nav>
-      </div>
-    </>
+        </div>
+      )}
+    </header>
   );
 }

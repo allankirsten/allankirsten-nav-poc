@@ -35,6 +35,12 @@
   --bg: #0D0D0D;
   --text: #F5F0E8;
   --accent: #C8A96E;
+
+  /* Content column cap. Same responsive curve as before up to ~1632px
+     viewport; past that, padding keeps growing so content never exceeds
+     90rem (1440px) wide on large monitors. */
+  --content-max: 90rem;
+  --section-px: max(clamp(1.5rem, 6vw, 6rem), calc((100% - var(--content-max)) / 2));
 }
 
 
@@ -52,6 +58,20 @@ body {
   max-width: 100%;
 }
 
+::selection {
+  background: rgba(200, 169, 110, 0.4); /* accent-40 */
+  color: inherit;
+}
+
+.about-page ::selection,
+.case-page ::selection,
+#provocacao ::selection,
+#prova ::selection,
+#credibilidade ::selection {
+  background: rgba(156, 123, 69, 0.4);
+  color: inherit;
+}
+
 html {
   background: var(--bg);
   color: var(--text);
@@ -62,4 +82,78 @@ body {
   background: var(--bg);
   color: var(--text);
   -webkit-font-smoothing: antialiased;
+}
+
+/* CTA — underline + arrow travel. Secondary/tertiary tier link style.
+   Dark variant (default) is for text over #0D0D0D / #000 (home, /ai, nav).
+   .cta-underline--light is for text over #fff (about, cases, contact). */
+.cta-underline {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0 0 0.4rem;
+  border-radius: 0;
+  border: none;
+  border-bottom: 1px solid rgba(245, 240, 232, 0.3);
+  color: #F5F0E8;
+  background: transparent;
+  position: relative;
+  font-family: var(--font-sans), sans-serif;
+  font-size: 0.8125rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  text-decoration: none;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  user-select: none;
+  transition: transform 0.15s ease;
+}
+.cta-underline:active {
+  transform: scale(0.96);
+}
+.cta-underline::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: -1px;
+  height: 1px;
+  width: 0;
+  background: #C8A96E;
+  transition: width 0.35s cubic-bezier(0.65, 0, 0.35, 1);
+}
+.cta-underline svg {
+  transition: transform 0.35s cubic-bezier(0.65, 0, 0.35, 1);
+}
+.cta-underline--light {
+  color: #000;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.3);
+}
+.cta-underline--light::after {
+  background: #9C7B45;
+}
+@media (hover: hover) and (pointer: fine) {
+  .cta-underline:hover { color: #C8A96E; }
+  .cta-underline:hover::after { width: 100%; }
+  .cta-underline:hover svg { transform: translate(3px, -3px); }
+  .cta-underline--light:hover { color: #9C7B45; }
+}
+
+/* Text link — inline citation inside running text, not a standalone CTA.
+   Sits in normal case/weight, no arrow, no uppercase — a quiet reference,
+   not a button. Dark variant (default) is for text over #0D0D0D / #000.
+   .text-link--light is for text over #fff (about, cases, how-i-work). */
+.text-link {
+  color: #C8A96E;
+  text-decoration: underline;
+  text-decoration-color: rgba(200, 169, 110, 0.5);
+  text-underline-offset: 0.15em;
+  transition: color 0.25s ease, text-decoration-color 0.25s ease;
+}
+.text-link--light {
+  color: #9C7B45;
+  text-decoration-color: rgba(156, 123, 69, 0.55);
+}
+@media (hover: hover) and (pointer: fine) {
+  .text-link:hover { color: #E0BC85; text-decoration-color: #E0BC85; }
+  .text-link--light:hover { color: #7A5C34; text-decoration-color: #7A5C34; }
 }

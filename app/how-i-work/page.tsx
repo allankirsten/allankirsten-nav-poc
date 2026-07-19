@@ -1,7 +1,12 @@
 "use client";
 
+import { useEffect } from "react";
+import gsap from "gsap";
 import { BackButton } from "@/components/BackButton";
 import { howIWorkContent } from "@/content/how-i-work";
+import { renderWords, renderChars, getSubCharDelays } from "@/lib/textReveal";
+
+const BIPA_CAST_URL = "https://www.youtube.com/watch?v=MF_56tmqwaU&list=PLa0LRF9MEUIrs5g-GSejXKvNiASj02Ngq&index=7";
 
 const css = `
   .hiw-page {
@@ -13,8 +18,8 @@ const css = `
     min-height: 100dvh;
     display: flex;
     flex-direction: column;
-    justify-content: space-between;
-    padding: clamp(4rem, 8vw, 6rem) clamp(1.5rem, 6vw, 6rem) clamp(3rem, 6vw, 5rem);
+    justify-content: center;
+    padding: var(--section-px);
     border-bottom: 1px solid #e5e5e5;
     box-sizing: border-box;
   }
@@ -24,6 +29,7 @@ const css = `
     text-transform: uppercase;
     color: #aaa;
     display: block;
+    margin-bottom: 2rem;
   }
   .hiw-title {
     font-family: var(--font-display);
@@ -41,7 +47,7 @@ const css = `
     line-height: 1.5;
   }
   .hiw-pillars {
-    padding: clamp(4rem, 8vw, 8rem) clamp(1.5rem, 6vw, 6rem);
+    padding: clamp(4rem, 8vw, 8rem) var(--section-px);
     display: flex;
     flex-direction: column;
   }
@@ -79,7 +85,7 @@ const css = `
   }
   .hiw-process {
     border-top: 1px solid #e5e5e5;
-    padding: clamp(4rem, 8vw, 8rem) clamp(1.5rem, 6vw, 6rem);
+    padding: clamp(4rem, 8vw, 8rem) var(--section-px);
   }
   .process-label {
     font-size: 0.625rem;
@@ -116,7 +122,7 @@ const css = `
   }
   .hiw-footer {
     border-top: 1px solid #e5e5e5;
-    padding: clamp(3rem, 6vw, 6rem) clamp(1.5rem, 6vw, 6rem);
+    padding: clamp(3rem, 6vw, 6rem) var(--section-px);
   }
   @media (min-width: 768px) {
     .process-step { grid-template-columns: 4rem 12rem 1fr; }
@@ -127,6 +133,19 @@ const css = `
 export default function HowIWork() {
   const { tagline, pillars, process, cta } = howIWorkContent;
 
+  useEffect(() => {
+    const words = document.querySelectorAll<HTMLElement>(".hiw-title .word");
+    const subChars = document.querySelectorAll<HTMLElement>(".hiw-tagline .sub-char");
+    const subDelays = getSubCharDelays(tagline);
+
+    gsap.fromTo(".hiw-eyebrow", { opacity: 0, y: -28 },
+      { opacity: 1, y: 0, duration: 0.9, ease: "power2.out" });
+    if (words.length) gsap.fromTo(words, { opacity: 0, y: 40, scale: 0.96 },
+      { opacity: 1, y: 0, scale: 1, stagger: 0.1521, duration: 1.69, ease: "power3.out", delay: 0.15 });
+    if (subChars.length) gsap.fromTo(subChars, { opacity: 0, y: 12 },
+      { opacity: 1, y: 0, stagger: (i: number) => subDelays[i], duration: 0.6, ease: "power2.out", delay: 0.4 });
+  }, [tagline]);
+
   return (
     <main className="hiw-page">
       <style dangerouslySetInnerHTML={{ __html: css }} />
@@ -134,8 +153,8 @@ export default function HowIWork() {
       <section className="hiw-hero">
         <span className="hiw-eyebrow">Method</span>
         <div>
-          <h1 className="hiw-title">How I<br />Work.</h1>
-          <p className="hiw-tagline">{tagline}</p>
+          <h1 className="hiw-title">{renderWords("How I")}<br />{renderWords("Work.")}</h1>
+          <p className="hiw-tagline">{renderChars(tagline)}</p>
         </div>
       </section>
 
@@ -145,7 +164,18 @@ export default function HowIWork() {
             <span className="pillar-number">{p.number}</span>
             <p className="pillar-word">{p.word}</p>
             <p className="pillar-headline">{p.headline}</p>
-            <p className="pillar-body">{p.body}</p>
+            <p className="pillar-body">
+              {p.body}
+              {p.number === "01" && (
+                <>
+                  {" "}Talked through a version of this on{" "}
+                  <a href={BIPA_CAST_URL} target="_blank" rel="noopener noreferrer" className="text-link text-link--light">
+                    Bipa Cast #74
+                  </a>
+                  , if podcasts are more your speed.
+                </>
+              )}
+            </p>
           </div>
         ))}
       </section>

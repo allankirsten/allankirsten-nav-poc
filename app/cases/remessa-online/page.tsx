@@ -1,6 +1,6 @@
 import { CasePage } from "@/components/CasePage";
-import { remessaContent } from "@/content/cases/remessa-online";
+import { getCaseContent, getCaseNavigation } from "@/lib/caseContent";
 
 export default function RemessaCase() {
-  return <CasePage content={remessaContent} />;
+  return <CasePage content={getCaseContent("remessa-online")} nav={getCaseNavigation("remessa-online")} />;
 }

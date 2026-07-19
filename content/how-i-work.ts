@@ -1,40 +1,52 @@
 import type { HowIWorkContent } from "./types";
 
 export const howIWorkContent: HowIWorkContent = {
-  tagline: "Three principles I've never shipped a good product without. Applied the same way at a seed-stage startup and a company with four million users.",
+  tagline: "Four principles I've never shipped a good product without. Applied the same way at a seed-stage startup and a company scaling past a million users.",
 
   pillars: [
     {
       number: "01",
-      word: "Clarity.",
-      headline: "The most expensive thing in product is building the wrong thing clearly.",
-      body: `Before I open Figma, I need to understand the actual problem. Not the symptom, not the feature request — the underlying gap between where the business is and where it needs to be.
+      word: "Context.",
+      headline: "Context is the first deliverable, not a step before the real work.",
+      body: `Before Figma, before any proposal, comes the hunt for context. Not the feature request, the real problem underneath it: who this is actually for, what the data says, what the business can't afford to get wrong.
 
-This means asking uncomfortable questions early. Who is this for, really? What does success look like in numbers? What happens if we do nothing? Most projects skip this phase because it feels slow. It's the opposite: it's the only thing that makes everything else fast.
+Context on its own is just noise. My habit is to structure it into frameworks, jobs, clusters, whatever turns the shape of a problem into something legible instead of a pile of notes only I understand.
 
-Clarity also means alignment. Design decisions made without shared understanding get revisited, revised, and relitigated. I work to make the problem legible to everyone in the room before any solution is proposed.`,
+Then it gets shared. Structured context becomes what the whole team works from, not something carried around in one person's head. Gather, structure, share: that's the sequence, in that order, every time.`,
     },
     {
       number: "02",
       word: "Velocity.",
       headline: "Speed is a design principle, not a trade-off.",
-      body: `Moving fast is a skill. It requires systems, not shortcuts.
+      body: `Moving fast is a skill. It takes systems, not shortcuts.
 
-I build with reuse in mind from day one — tokens, components, patterns that compound over time. When the design system is right, new surfaces take hours instead of weeks. When it's wrong, every new screen is a negotiation.
+My approach from day one is to build with reuse in mind, tokens, components, patterns that compound over time. A good design system turns new surfaces into hours of work instead of weeks. Get it wrong, and every new screen becomes a negotiation.
 
-Velocity also means making decisions under uncertainty without freezing. I default to testable assumptions over perfect specifications. A prototype that fails in week two is worth more than a spec that fails in production.
+Testable assumptions beat perfect specifications, especially under uncertainty. A prototype that fails in week two is worth more than a spec that fails in production.
 
-The teams I work with ship faster after I join — not because I work harder, but because I reduce the friction between idea and execution.`,
+Teams ship faster once this is in place, not from working harder, but from less friction between idea and execution.`,
     },
     {
       number: "03",
       word: "Impact.",
       headline: "Design that doesn't move a number doesn't matter.",
-      body: `I measure my work the way the business measures its work: users retained, revenue converted, support tickets not filed, decisions made faster.
+      body: `My yardstick is the same one the business uses: users retained, revenue converted, support tickets not filed, decisions made faster.
 
-This means being present in the conversations where product strategy is made — not as an executor, but as a co-author. The best design decisions I've made happened before any wireframe existed, in a meeting where I asked the right question at the right time.
+That means sitting in the conversations where product strategy gets made, not as an executor, but as a co-author. The best design decisions rarely start with a wireframe. They start in a meeting, with the right question asked at the right time.
 
-Impact also accumulates. The design systems I've built are still running products I left years ago. The research frameworks I established became standard practice. Good design work has leverage — it keeps paying after you're gone.`,
+Impact also compounds. Design systems built years ago are still running products long after the handoff. Research frameworks turn into standard practice and outlive the project that produced them. Good design work has leverage, it keeps paying after you're gone.`,
+    },
+    {
+      number: "04",
+      word: "Leadership.",
+      headline: "Trust comes from staying hands-on, not from a leadership deck.",
+      body: `A leader who stays away from the work loses the ability to judge it. The team feels that distance long before anyone names it.
+
+Running the interview myself when the insight needs a real conversation. Merging the PR when the fix is faster in my hands than in a ticket. Debugging the pipeline instead of asking for a status update. Small moves, but the team notices who's still doing the work.
+
+Empathy runs both directions this way, for the team and from the team, until the hierarchy stops feeling like a wall. We're in the same boat, and everyone can see it.
+
+The same closeness makes mentoring real. Reviewing a PR together, walking through why a research question worked, unpacking a trade-off as it happens, that teaches faster than any quarterly review. Growth compounds the same way impact does.`,
     },
   ],
 

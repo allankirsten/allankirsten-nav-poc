@@ -1,0 +1,83 @@
+{
+  "type": "site",
+  "name": "Allan Kirsten",
+  "role": "Product & Design Leader",
+  "tagline_pt": "Construo negócios usando design como ferramenta.",
+  "tagline_en": "I build businesses using design as a tool.",
+  "lang_default": "pt",
+  "hero": {
+    "pt": {
+      "line": "Construo negócios usando design como ferramenta.",
+      "context": "Dez anos em produto. Fintechs, SaaS, venture builders. Times de 1 a 35 pessoas. Um exit de $229M."
+    },
+    "en": {
+      "line": "I build businesses using design as a tool.",
+      "context": "Ten years in product. Fintechs, SaaS, venture builders. Teams from 1 to 35 people. One $229M exit."
+    }
+  },
+  "proof": {
+    "pt": [
+      {
+        "label": "Remessa Online",
+        "value": "exit US$229M (EBANX)"
+      },
+      {
+        "label": "Betterfly",
+        "value": "US$125M Series C, unicórnio LATAM"
+      },
+      {
+        "label": "Time global pós-M&A",
+        "value": "35 pessoas, 4 países, 3 idiomas"
+      },
+      {
+        "label": "Carreira",
+        "value": "10 anos em produto, 23 em design"
+      }
+    ],
+    "en": [
+      {
+        "label": "Remessa Online",
+        "value": "US$229M exit (EBANX)"
+      },
+      {
+        "label": "Betterfly",
+        "value": "US$125M Series C, LATAM unicorn"
+      },
+      {
+        "label": "Global team, post-M&A",
+        "value": "35 people, 4 countries, 3 languages"
+      },
+      {
+        "label": "Career",
+        "value": "10 years in product, 23 in design"
+      }
+    ]
+  },
+  "philosophy": {
+    "pt": [
+      "Design não é estética. É uma capacidade de negócio.",
+      "Pesquisa sem decisão é arquivo.",
+      "Posso te ajudar a decidir enquanto o design entrega valor.",
+      "A provocação mais eficiente é o contraste, não a crítica."
+    ],
+    "en": [
+      "Design is not aesthetics. It is a business capability.",
+      "Research without a decision is just an archive.",
+      "I can help you decide while design delivers value.",
+      "The most effective provocation is contrast, not criticism."
+    ]
+  },
+  "contact": {
+    "email": "allankirsten@gmail.com",
+    "linkedin": "https://www.linkedin.com/in/allankirsten"
+  },
+  "logos": [
+    "Remessa Online",
+    "Betterfly",
+    "Bipa",
+    "Embraer",
+    "Itaú Cultural",
+    "O Boticário"
+  ],
+  "intro": "# Allan Kirsten\n\nProduct e design leader. Dez anos construindo produto para startups, vinte e três de carreira em design. Trabalho na interseção de design, produto, negócio, dados e execução.\n\nEste endereço existe para ser lido por pessoas e por AIs. Se você é founder, CPO ou recrutador e quer me conhecer rápido, aponte sua AI para `allankirsten.com/llms.txt` e pergunte o que quiser. As respostas saem daqui.\n\n## O que eu trago\n\nVocê está construindo algo complexo com time enxuto e pouco tempo pra erro.\n\nEu entro quando o produto precisa de direção, não só de execução. Quando a pesquisa precisa virar decisão. Quando o time de design precisa de alguém que fale a língua do negócio sem abrir mão da experiência do usuário.\n\nFunciono melhor em ambientes de alta ambiguidade, do early stage à Series B, onde cada decisão ainda importa de verdade.\n\n## Onde olhar\n\n- Trajetória completa em `/ai/experience`\n- Cases de produto em `/ai/cases/*`\n- Como eu trabalho em `/ai/how-i-work`\n- Contato em `/ai/contact`"
+}

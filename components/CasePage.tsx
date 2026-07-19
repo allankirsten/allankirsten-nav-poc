@@ -1,10 +1,12 @@
 "use client";
 
 import { useEffect, useLayoutEffect } from "react";
+import Link from "next/link";
 import gsap from "gsap";
 import { BackButton } from "@/components/BackButton";
 import { ImgFull } from "@/components/ImgFull";
 import type { CaseContent } from "@/content/types";
+import type { CaseNavItem } from "@/lib/caseContent";
 
 const css = `
   .case-page {
@@ -21,7 +23,7 @@ const css = `
     justify-content: space-between;
     height: 100dvh;
     box-sizing: border-box;
-    padding: clamp(5rem, 10vw, 8rem) clamp(1.5rem, 6vw, 6rem) clamp(3rem, 6vw, 5rem);
+    padding: clamp(5rem, 10vw, 8rem) var(--section-px) clamp(3rem, 6vw, 5rem);
   }
   .case-title {
     font-family: var(--font-display);
@@ -37,8 +39,8 @@ const css = `
     display: flex;
     flex-wrap: wrap;
     gap: 2rem;
-    margin-top: 2.5rem;
-    margin-bottom: 2rem;
+    margin-top: 3rem;
+    margin-bottom: 2.5rem;
   }
   .case-meta-item { display: flex; flex-direction: column; gap: 0.25rem; }
   .case-meta-label {
@@ -60,11 +62,11 @@ const css = `
     display: grid;
     grid-template-columns: repeat(2, 1fr);
     border-top: 1px solid #e5e5e5;
-    margin-inline: calc(-1 * clamp(1.5rem, 6vw, 6rem));
-    width: calc(100% + 2 * clamp(1.5rem, 6vw, 6rem));
+    margin-inline: calc(-1 * var(--section-px));
+    width: calc(100% + 2 * var(--section-px));
   }
   .metric-cell {
-    padding: clamp(2rem, 5vw, 4rem) clamp(1.5rem, 6vw, 6rem);
+    padding: clamp(2rem, 5vw, 4rem) var(--section-px);
     border-right: 1px solid #e5e5e5;
     border-bottom: 1px solid #e5e5e5;
   }
@@ -89,12 +91,12 @@ const css = `
     position: relative;
     z-index: 2;
     background: #fff;
-    padding: clamp(4rem, 8vw, 8rem) clamp(1.5rem, 6vw, 6rem);
+    padding: clamp(4rem, 8vw, 8rem) var(--section-px);
     display: flex;
     flex-direction: column;
     gap: clamp(5rem, 10vw, 10rem);
   }
-  .case-section { display: flex; flex-direction: column; gap: 1.5rem; max-width: 72ch; }
+  .case-section { display: flex; flex-direction: column; gap: 2rem; max-width: 72ch; }
   .section-label {
     font-size: 0.625rem;
     letter-spacing: 0.2em;
@@ -120,18 +122,19 @@ const css = `
     display: block;
     width: 100%;
     height: auto;
-    margin-top: 3rem;
+    margin-top: 4rem;
     border: 1px solid #e8e8e8;
-    border-radius: 3px;
+    border-radius: 6px;
   }
   .case-placeholder {
     background: #f7f7f7;
     border: 1px solid #e5e5e5;
+    border-radius: 6px;
     aspect-ratio: 16 / 9;
     display: flex;
     align-items: center;
     justify-content: center;
-    margin: 3rem clamp(1.5rem, 6vw, 6rem) 0;
+    margin: 4rem var(--section-px) 0;
   }
   .case-placeholder-label {
     font-size: 0.625rem;
@@ -144,7 +147,49 @@ const css = `
     z-index: 2;
     background: #fff;
     border-top: 1px solid #e5e5e5;
-    padding: clamp(3rem, 6vw, 6rem) clamp(1.5rem, 6vw, 6rem);
+    padding: clamp(3rem, 6vw, 6rem) var(--section-px);
+  }
+  .case-crosslinks {
+    position: relative;
+    z-index: 2;
+    background: #fff;
+    border-top: 1px solid #e5e5e5;
+    display: grid;
+    grid-template-columns: 1fr;
+  }
+  .crosslink {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    padding: clamp(2rem, 5vw, 3.5rem) var(--section-px);
+    text-decoration: none;
+    color: inherit;
+    transition: background 0.3s ease;
+  }
+  .crosslink:hover { background: #f7f7f7; }
+  .crosslink--prev { border-bottom: 1px solid #e5e5e5; }
+  .crosslink-label {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.625rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: #aaa;
+  }
+  .crosslink--next .crosslink-label { justify-content: flex-end; }
+  .crosslink-title {
+    font-family: var(--font-display);
+    font-size: clamp(1.75rem, 4vw, 3rem);
+    line-height: 1;
+    letter-spacing: -0.01em;
+    font-weight: 400;
+    color: #000;
+  }
+  .crosslink--next .crosslink-title { text-align: right; }
+  @media (min-width: 640px) {
+    .case-crosslinks { grid-template-columns: 1fr 1fr; }
+    .crosslink--prev { border-bottom: none; border-right: 1px solid #e5e5e5; }
   }
   @media (min-width: 640px) {
     .case-metrics { grid-template-columns: repeat(4, 1fr); }
@@ -154,7 +199,9 @@ const css = `
   }
 `;
 
-export function CasePage({ content }: { content: CaseContent }) {
+type CaseNav = { prev: CaseNavItem; next: CaseNavItem };
+
+export function CasePage({ content, nav }: { content: CaseContent; nav?: CaseNav }) {
   const { hero, heroImage, metrics, sections, cta } = content;
 
   useLayoutEffect(() => {
@@ -246,12 +293,25 @@ export function CasePage({ content }: { content: CaseContent }) {
               />
             ) : s.visual ? (
               <div className="case-placeholder">
-                <span className="case-placeholder-label">Visual — {s.visual}</span>
+                <span className="case-placeholder-label">Visual: {s.visual}</span>
               </div>
             ) : null}
           </div>
         ))}
       </div>
+
+      {nav ? (
+        <nav className="case-crosslinks" aria-label="Other cases">
+          <Link href={`/cases/${nav.prev.slug}`} className="crosslink crosslink--prev">
+            <span className="crosslink-label">← Previous case</span>
+            <span className="crosslink-title">{nav.prev.title}</span>
+          </Link>
+          <Link href={`/cases/${nav.next.slug}`} className="crosslink crosslink--next">
+            <span className="crosslink-label">Next case →</span>
+            <span className="crosslink-title">{nav.next.title}</span>
+          </Link>
+        </nav>
+      ) : null}
 
       <footer className="case-footer">
         <p style={{ fontFamily: "var(--font-display)", fontSize: "clamp(2rem, 5vw, 3.5rem)", lineHeight: 1, fontWeight: 400, color: "#000", maxWidth: "20ch" }}>
@@ -259,7 +319,7 @@ export function CasePage({ content }: { content: CaseContent }) {
         </p>
       </footer>
 
-      <BackButton fallback="/" label="Home" />
+      <BackButton fallback="/" label="Home" forceFallback />
     </main>
   );
 }

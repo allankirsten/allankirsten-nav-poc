@@ -3,7 +3,16 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 
-export function BackButton({ fallback = "/", label = "Back" }: { fallback?: string; label?: string }) {
+export function BackButton({
+  fallback = "/",
+  label = "Back",
+  forceFallback = false,
+}: {
+  fallback?: string;
+  label?: string;
+  /** Always navigate to `fallback` instead of `router.back()`. Use when the label promises a specific destination (e.g. "Home") that browser history can't guarantee — cross-links between pages of the same kind (case-to-case, for example) make plain `back()` land somewhere other than what the label says. */
+  forceFallback?: boolean;
+}) {
   const [collapsed, setCollapsed] = useState(false);
   const router = useRouter();
 
@@ -13,7 +22,7 @@ export function BackButton({ fallback = "/", label = "Back" }: { fallback?: stri
   }, []);
 
   const handleClick = () => {
-    if (window.history.length > 1) {
+    if (!forceFallback && window.history.length > 1) {
       router.back();
     } else {
       router.push(fallback);

@@ -27,23 +27,7 @@ async function copyToClipboard(value: string) {
 export function ContactFrame({ label, text }: { label: string; text: string }) {
   const [copied, setCopied] = useState(false);
 
-  const borderColor = text === "#000" ? "rgba(0, 0, 0, 0.25)" : "rgba(255, 255, 255, 0.25)";
-
-  const pillStyle = {
-    fontFamily: "var(--font-sans)",
-    fontSize: "0.875rem",
-    letterSpacing: "0.04em",
-    color: text,
-    border: `1px solid ${borderColor}`,
-    borderRadius: "999px",
-    padding: "0.75rem 1.75rem",
-    background: "transparent",
-    cursor: "pointer",
-    display: "inline-flex",
-    alignItems: "center",
-    gap: "0.5rem",
-    textDecoration: "none",
-  };
+  const ctaClass = `contact-pill cta-underline${text === "#000" ? " cta-underline--light" : ""}`;
 
   const handleCopy = async () => {
     await copyToClipboard(contact.email);
@@ -97,26 +81,19 @@ export function ContactFrame({ label, text }: { label: string; text: string }) {
         No forms. Just reach out.
       </h2>
 
-      <div style={{ display: "flex", gap: "1rem", flexWrap: "wrap" }}>
+      <div style={{ display: "flex", gap: "2.5rem", flexWrap: "wrap" }}>
         <a
           href={contact.linkedinUrl}
           target="_blank"
           rel="noopener noreferrer"
-          className="contact-pill"
-          style={pillStyle}
-          onMouseEnter={(e) => { e.currentTarget.style.opacity = "0.7"; }}
-          onMouseLeave={(e) => { e.currentTarget.style.opacity = "1"; }}
+          className={ctaClass}
         >
-          LinkedIn ↗
+          LinkedIn
+          <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+            <path d="M3 11L11 3M11 3H5M11 3V9" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round" />
+          </svg>
         </a>
-        <button
-          type="button"
-          className="contact-pill"
-          style={pillStyle}
-          onClick={handleCopy}
-          onMouseEnter={(e) => { e.currentTarget.style.opacity = "0.7"; }}
-          onMouseLeave={(e) => { e.currentTarget.style.opacity = "1"; }}
-        >
+        <button type="button" className={ctaClass} onClick={handleCopy}>
           {copied ? "Copied!" : "Copy email"} ⧉
         </button>
       </div>

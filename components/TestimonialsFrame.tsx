@@ -1,27 +1,15 @@
-"use client";
-
-import { useEffect, useRef, useState } from "react";
 import type { Testimonial } from "@/content/types";
+import { ScrollGallery } from "@/components/ScrollGallery";
 
 const css = `
   .testimonial-track {
-    display: flex;
     justify-content: flex-start;
     gap: clamp(2.5rem, 6vw, 8rem);
-    overflow-x: auto;
-    scroll-snap-type: x mandatory;
     scroll-padding-inline: clamp(2rem, 8vw, 8rem);
-    scrollbar-width: none;
     padding: 0 clamp(2rem, 8vw, 8rem) 0.5rem;
   }
-  .testimonial-track::-webkit-scrollbar { display: none; }
   .testimonial-card {
-    flex: 0 0 auto;
-    scroll-snap-align: start;
     width: clamp(260px, 65vw, 688px);
-    display: flex;
-    flex-direction: column;
-    gap: 1.25rem;
     box-sizing: border-box;
   }
 `;
@@ -41,36 +29,7 @@ export function TestimonialsFrame({
   label: string;
   text: string;
 }) {
-  const trackRef = useRef<HTMLDivElement>(null);
-  const [active, setActive] = useState(0);
   const items = testimonials.slice(0, 5);
-
-  useEffect(() => {
-    const track = trackRef.current;
-    if (!track) return;
-
-    const updateActive = () => {
-      const cards = Array.from(track.querySelectorAll<HTMLElement>(".testimonial-card"));
-      const trackLeft = track.getBoundingClientRect().left;
-      let closest = 0;
-      let minDist = Infinity;
-      cards.forEach((card, i) => {
-        const dist = Math.abs(card.getBoundingClientRect().left - trackLeft);
-        if (dist < minDist) { minDist = dist; closest = i; }
-      });
-      setActive(closest);
-    };
-
-    updateActive();
-    track.addEventListener("scroll", updateActive, { passive: true });
-    return () => track.removeEventListener("scroll", updateActive);
-  }, []);
-
-  const goTo = (i: number) => {
-    const track = trackRef.current;
-    const card = track?.querySelectorAll<HTMLElement>(".testimonial-card")[i];
-    card?.scrollIntoView({ behavior: "smooth", inline: "start", block: "nearest" });
-  };
 
   return (
     <div
@@ -88,7 +47,7 @@ export function TestimonialsFrame({
     >
       <style dangerouslySetInnerHTML={{ __html: css }} />
 
-      <div style={{ paddingLeft: "clamp(1.5rem, 6vw, 6rem)" }}>
+      <div style={{ paddingLeft: "var(--section-px)" }}>
         <span
           className="frame-label"
           style={{
@@ -104,11 +63,21 @@ export function TestimonialsFrame({
         </span>
       </div>
 
-      <div ref={trackRef} className="testimonial-track">
-        {items.map((t, i) => {
+      <ScrollGallery
+        trackClassName="testimonial-track"
+        slideClassName="testimonial-card"
+        dotColor={text}
+        activeDotColor="var(--accent)"
+        dotLabel={(i) => `Ir para depoimento ${i + 1}`}
+        renderSlide={(slide, _i, active) => (
+          <div style={{ display: "flex", flexDirection: "column", gap: "1.25rem", opacity: active ? 1 : 0.35, transition: "opacity 0.35s ease" }}>
+            {slide}
+          </div>
+        )}
+        slides={items.map((t) => {
           const { lead, rest } = splitQuote(t.quote);
           return (
-            <div key={i} className="testimonial-card" style={{ opacity: i === active ? 1 : 0.35, transition: "opacity 0.35s ease" }}>
+            <>
               <span
                 style={{
                   fontFamily: "var(--font-display)",
@@ -171,38 +140,10 @@ export function TestimonialsFrame({
                   {t.role}, {t.company}
                 </span>
               </div>
-            </div>
+            </>
           );
         })}
-      </div>
-
-      <div
-        style={{
-          display: "flex",
-          gap: "0.5rem",
-          justifyContent: "center",
-          alignItems: "center",
-        }}
-      >
-        {items.map((_, i) => (
-          <button
-            key={i}
-            aria-label={`Ir para depoimento ${i + 1}`}
-            onClick={() => goTo(i)}
-            style={{
-              width: i === active ? "8px" : "6px",
-              height: i === active ? "8px" : "6px",
-              borderRadius: "50%",
-              background: i === active ? "var(--accent)" : text,
-              opacity: i === active ? 1 : 0.3,
-              border: "none",
-              padding: 0,
-              cursor: "pointer",
-              transition: "width 0.25s ease, height 0.25s ease, opacity 0.25s ease, background 0.25s ease",
-            }}
-          />
-        ))}
-      </div>
+      />
     </div>
   );
 }

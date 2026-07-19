@@ -1,7 +1,11 @@
 import type { Metadata } from "next";
+import Script from "next/script";
 import { Atkinson_Hyperlegible, DM_Serif_Display } from "next/font/google";
 import "./globals.css";
 import { Navigation } from "@/components/Navigation";
+import PersonJsonLd from "@/components/PersonJsonLd";
+
+const GA_MEASUREMENT_ID = "G-FSBTENKVS7";
 
 const atkinson = Atkinson_Hyperlegible({
   variable: "--font-geist-sans",
@@ -16,8 +20,8 @@ const dmSerif = DM_Serif_Display({
 });
 
 export const metadata: Metadata = {
-  title: "Allan Kirsten — POC Nav",
-  description: "Navigation component POC",
+  title: "Allan Kirsten's Portfolio 2026",
+  description: "Allan Kirsten, product design portfolio.",
 };
 
 export default function RootLayout({
@@ -28,6 +32,19 @@ export default function RootLayout({
   return (
     <html lang="pt-BR" className={`${atkinson.variable} ${dmSerif.variable} antialiased`}>
       <body>
+        <PersonJsonLd />
+        <Script
+          src={`https://www.googletagmanager.com/gtag/js?id=${GA_MEASUREMENT_ID}`}
+          strategy="afterInteractive"
+        />
+        <Script id="ga4-init" strategy="afterInteractive">
+          {`
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+            gtag('config', '${GA_MEASUREMENT_ID}');
+          `}
+        </Script>
         <Navigation />
         {children}
       </body>

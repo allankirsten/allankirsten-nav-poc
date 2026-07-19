@@ -1,6 +1,6 @@
 import { CasePage } from "@/components/CasePage";
-import { bipaContent } from "@/content/cases/bipa";
+import { getCaseContent, getCaseNavigation } from "@/lib/caseContent";
 
 export default function BipaCase() {
-  return <CasePage content={bipaContent} />;
+  return <CasePage content={getCaseContent("bipa")} nav={getCaseNavigation("bipa")} />;
 }
