@@ -236,7 +236,7 @@ const css = `
 
 const ATW_SUBHEAD = "The portfolio of someone who builds things for a living should, itself, be well built.";
 
-const timeline = ["HTML/CSS by hand", "Flash", "WordPress", "Framer, built from the ground up", "Next.js, paired with Claude Code"];
+const timeline = ["HTML/CSS by hand", "Flash", "WordPress", "Framer", "Next.js, paired with Claude Code"];
 
 const metrics = [
   { value: "1999", label: "Building sites by hand since" },

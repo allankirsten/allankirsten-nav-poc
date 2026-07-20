@@ -177,7 +177,7 @@ export function Navigation() {
         alignItems: "center",
         justifyContent: "space-between",
         padding: "1rem clamp(1.5rem, 6vw, 3rem)",
-        background: t.bg(scrolled ? 0.92 : 0.72),
+        background: t.bg(scrolled ? 0.92 : 0.1),
         backdropFilter: "blur(10px)",
         transition: "background 0.3s ease",
       }}

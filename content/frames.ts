@@ -5,7 +5,7 @@ export const frames: Frame[] = [
     id: "abertura",
     label: "01",
     title: "From chaos to done, by design.",
-    sub: "The proof is below.",
+    sub: "Allan Kirsten's Portfolio 2026",
     bg: "#000", text: "#fff",
   },
   {
@@ -39,12 +39,5 @@ export const frames: Frame[] = [
     title: "$229M exit. 35-person team. One designer.",
     sub: "Results, not résumé.",
     bg: "#fff", text: "#000",
-  },
-  {
-    id: "desfecho",
-    label: "08",
-    title: "Are you building something that matters?",
-    sub: "Let's talk.",
-    bg: "#000", text: "#fff",
   },
 ];

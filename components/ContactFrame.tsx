@@ -69,8 +69,8 @@ export function ContactFrame({ label, text }: { label: string; text: string }) {
         className="contact-heading"
         style={{
           fontFamily: "var(--font-display)",
-          fontSize: "var(--text-heading)",
-          lineHeight: "var(--text-heading--line-height)",
+          fontSize: "var(--text-display-section)",
+          lineHeight: "var(--text-display--line-height)",
           fontWeight: 400,
           color: text,
           letterSpacing: "-0.01em",
@@ -78,8 +78,23 @@ export function ContactFrame({ label, text }: { label: string; text: string }) {
           textAlign: "left",
         }}
       >
-        No forms. Just reach out.
+        Are you building something that matters?
       </h2>
+
+      <p
+        className="contact-sub"
+        style={{
+          fontFamily: "var(--font-sans)",
+          fontSize: "var(--text-caption)",
+          fontWeight: 300,
+          letterSpacing: "0.1em",
+          textTransform: "uppercase",
+          color: text,
+          opacity: 0.5,
+        }}
+      >
+        No forms. Just reach out.
+      </p>
 
       <div style={{ display: "flex", gap: "2.5rem", flexWrap: "wrap" }}>
         <a

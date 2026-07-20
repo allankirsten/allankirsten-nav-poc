@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect } from "react";
+import Image from "next/image";
 import Link from "next/link";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
@@ -32,7 +33,7 @@ const homeSections: HomeSection[] = [
   ...frames.slice(identIdx + 1, credIdx + 1).map((frame) => ({ kind: "frame" as const, frame })),
   { kind: "testimonials" as const, id: "depoimentos", label: "07", bg: "#000", text: "#fff", testimonials },
   ...frames.slice(credIdx + 1).map((frame) => ({ kind: "frame" as const, frame })),
-  { kind: "contact" as const, id: "contato", label: "09", bg: "#fff", text: "#000" },
+  { kind: "contact" as const, id: "contato", label: "08", bg: "#fff", text: "#000" },
 ];
 
 // Breaks title into segments, grouping multi-word linked phrases together.
@@ -200,10 +201,11 @@ export default function Home() {
       if (section.kind === "contact") {
         const label = frameEl.querySelector<HTMLElement>(".frame-label");
         const heading = frameEl.querySelector<HTMLElement>(".contact-heading");
+        const sub = frameEl.querySelector<HTMLElement>(".contact-sub");
         const pills = frameEl.querySelectorAll<HTMLElement>(".contact-pill");
 
         if (alreadyPast) {
-          gsap.set([label, heading, ...Array.from(pills)], { opacity: 1, y: 0 });
+          gsap.set([label, heading, sub, ...Array.from(pills)], { opacity: 1, y: 0 });
           return;
         }
 
@@ -215,8 +217,12 @@ export default function Home() {
           opacity: 1, y: 0, duration: 0.9, ease: "power3.out", delay: 0.1,
           scrollTrigger: { start: frameStart - 120, end: frameStart + frameHeight * 0.25, toggleActions: "play none none none" },
         });
+        if (sub) gsap.fromTo(sub, { opacity: 0, y: 20 }, {
+          opacity: 1, y: 0, duration: 0.7, ease: "power2.out", delay: 0.2,
+          scrollTrigger: { start: frameStart - 120, end: frameStart + frameHeight * 0.25, toggleActions: "play none none none" },
+        });
         if (pills.length) gsap.fromTo(pills, { opacity: 0, y: 20 }, {
-          opacity: 1, y: 0, duration: 0.7, ease: "power3.out", stagger: 0.1, delay: 0.25,
+          opacity: 1, y: 0, duration: 0.7, ease: "power3.out", stagger: 0.1, delay: 0.3,
           scrollTrigger: { start: frameStart - 120, end: frameStart + frameHeight * 0.25, toggleActions: "play none none none" },
         });
 
@@ -435,9 +441,34 @@ export default function Home() {
             justifyContent: "flex-start",
             padding: "clamp(5rem, 16vw, 14rem) var(--section-px)",
             boxSizing: "border-box",
+            overflow: i === 0 ? "hidden" : undefined,
           }}
         >
           {i === 0 ? (
+            <>
+            <div className="hero-bg-wrap" style={{ position: "fixed", top: 0, left: 0, width: "100vw", height: "100dvh" }}>
+              <Image
+                src="/images/octopus-bg.webp"
+                alt=""
+                fill
+                sizes="100vw"
+                className="bg-fade-in"
+                style={{ objectFit: "cover" }}
+              />
+            </div>
+            <div
+              aria-hidden="true"
+              style={{
+                position: "absolute",
+                top: 0,
+                left: 0,
+                width: "100%",
+                height: "120px",
+                background: "linear-gradient(to bottom, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0) 100%)",
+                zIndex: 1,
+                pointerEvents: "none",
+              }}
+            />
             <div
               className="frame-text"
               style={{
@@ -480,22 +511,7 @@ export default function Home() {
                 {renderTitleWords(frame, saveScroll)}
               </h2>
 
-              <p
-                style={{
-                  fontFamily: "var(--font-sans)",
-                  fontSize: "var(--text-caption)",
-                  fontWeight: 300,
-                  letterSpacing: "0.08em",
-                  textTransform: "uppercase",
-                  color: frame.text,
-                  opacity: 0.6,
-                  marginTop: "1.25rem",
-                }}
-              >
-                Allan Kirsten&apos;s Portfolio 2026
-              </p>
-
-              <div style={{ display: "flex", alignItems: "center", gap: "1rem", marginTop: "2rem" }}>
+              <div style={{ display: "flex", alignItems: "center", gap: "1rem", marginTop: "1.25rem" }}>
                 <p
                   className="frame-sub"
                   style={{
@@ -513,6 +529,7 @@ export default function Home() {
                 </p>
               </div>
             </div>
+            </>
           ) : (
             <div
               className="frame-text"
@@ -545,7 +562,7 @@ export default function Home() {
               <h2
                 style={{
                   fontFamily: "var(--font-display)",
-                  fontSize: "var(--text-display)",
+                  fontSize: "var(--text-display-section)",
                   lineHeight: "var(--text-display--line-height)",
                   fontWeight: 400,
                   color: frame.text,

@@ -9,8 +9,12 @@
   --font-display: var(--font-display);
 
   /* Type scale — semântica por uso, não por tamanho */
-  --text-display:              clamp(5.6rem, 10vw, 9.5rem);
+  --text-display:              clamp(5.3rem, 10vw, 9.5rem);
   --text-display--line-height: 0.88;
+
+  /* Section/contact titles — same tier as hero, but shrink more on mobile
+     (hero keeps near-full size; these wrap into too many lines otherwise). */
+  --text-display-section:              clamp(3.6rem, 10vw, 9.5rem);
 
   --text-title:                clamp(3.25rem, 7.8vw, 5.85rem);
   --text-title--line-height:   0.95;
@@ -156,4 +160,19 @@ body {
 @media (hover: hover) and (pointer: fine) {
   .text-link:hover { color: #E0BC85; text-decoration-color: #E0BC85; }
   .text-link--light:hover { color: #7A5C34; text-decoration-color: #7A5C34; }
+}
+
+/* Hero bg — octopus image, same fade-in-zoom-out as the current live site. */
+@keyframes bgFadeInZoomOut {
+  from {
+    opacity: 0;
+    transform: scale(1.06);
+  }
+  to {
+    opacity: 0.32;
+    transform: scale(1);
+  }
+}
+.bg-fade-in {
+  animation: bgFadeInZoomOut 3.5s ease-out forwards;
 }

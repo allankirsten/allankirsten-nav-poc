@@ -3,6 +3,7 @@ import Script from "next/script";
 import { Atkinson_Hyperlegible, DM_Serif_Display } from "next/font/google";
 import "./globals.css";
 import { Navigation } from "@/components/Navigation";
+import { Footer } from "@/components/Footer";
 import PersonJsonLd from "@/components/PersonJsonLd";
 
 const GA_MEASUREMENT_ID = "G-FSBTENKVS7";
@@ -47,6 +48,7 @@ export default function RootLayout({
         </Script>
         <Navigation />
         {children}
+        <Footer />
       </body>
     </html>
   );
