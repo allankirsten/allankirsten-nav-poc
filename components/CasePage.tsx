@@ -287,7 +287,7 @@ export function CasePage({ content, nav }: { content: CaseContent; nav?: CaseNav
             </div>
             {s.visualSrc ? (
               <img
-                src={s.visualSrc}
+                src={`${process.env.NEXT_PUBLIC_BASE_PATH ?? ""}${s.visualSrc}`}
                 alt={s.visual ?? ""}
                 className="case-visual-img"
               />

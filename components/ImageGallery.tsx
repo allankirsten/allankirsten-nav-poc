@@ -41,7 +41,7 @@ export function ImageGallery({ images }: { images: GalleryImage[] }) {
       <ScrollGallery
         slides={images.map((img, i) =>
           img.src ? (
-            <img key={i} src={img.src} alt={img.alt ?? ""} />
+            <img key={i} src={`${process.env.NEXT_PUBLIC_BASE_PATH ?? ""}${img.src}`} alt={img.alt ?? ""} />
           ) : (
             <span key={i} className="image-gallery-slide-label">Photo</span>
           )

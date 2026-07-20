@@ -33,7 +33,7 @@ export function ImgFull({ src, alt = "" }: { src?: string; alt?: string }) {
       <style dangerouslySetInnerHTML={{ __html: css }} />
       <div className="img-full">
         {src ? (
-          <img src={src} alt={alt} />
+          <img src={`${process.env.NEXT_PUBLIC_BASE_PATH ?? ""}${src}`} alt={alt} />
         ) : (
           <div className="img-full__ph">Visual</div>
         )}

@@ -159,7 +159,7 @@ export default function About() {
 
       <section className="about-section about-section--split">
         <div className="about-split-image">
-          <img src="/images/allan-portrait.jpg" alt="Allan Kirsten" />
+          <img src={`${process.env.NEXT_PUBLIC_BASE_PATH ?? ""}/images/allan-portrait.jpg`} alt="Allan Kirsten" />
         </div>
         <div className="about-split-text">
           <span className="about-section-label">The short version</span>

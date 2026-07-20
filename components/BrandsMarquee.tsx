@@ -46,6 +46,7 @@ export function BrandsMarquee({ brands }: { brands: Brand[] }) {
   const posRef = useRef(0);
 
   const doubled = [...brands, ...brands];
+  const basePath = process.env.NEXT_PUBLIC_BASE_PATH ?? "";
 
   useEffect(() => {
     const band = bandRef.current;
@@ -114,7 +115,7 @@ export function BrandsMarquee({ brands }: { brands: Brand[] }) {
             <img
               key={i}
               className="brand-item"
-              src={brand.src}
+              src={`${basePath}${brand.src}`}
               alt={brand.name}
               style={{ width: `calc(2.5rem * ${brand.ratio})` }}
               draggable={false}
