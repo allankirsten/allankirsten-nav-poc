@@ -28,7 +28,7 @@ const css = `
     padding: clamp(5rem, 10vw, 8rem) var(--section-px) var(--hero-pb);
   }
   @media (max-width: 639px) {
-    .case-hero { padding-top: 9rem; }
+    .case-hero { padding-top: 7.65rem; }
   }
   .case-title {
     font-family: var(--font-display);
@@ -70,6 +70,7 @@ const css = `
     .case-tagline {
       font-size: 1.375rem;
       color: #555;
+      min-height: 240px;
     }
   }
   .case-metrics {

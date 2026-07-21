@@ -17,23 +17,12 @@ export function BackButton({
   const hoveringRef = useRef(false);
   const router = useRouter();
 
-  // Reveals the label briefly, then collapses back — repeating on a calm
-  // cycle so the label also comes back on touch devices, which have no
-  // hover to bring it back after the initial reveal.
+  // Reveals the label briefly on mount, then collapses back down to the icon.
   useEffect(() => {
-    let hideTimer: ReturnType<typeof setTimeout>;
-    const reveal = () => {
-      setCollapsed(false);
-      hideTimer = setTimeout(() => {
-        if (!hoveringRef.current) setCollapsed(true);
-      }, 2200);
-    };
-    reveal();
-    const interval = setInterval(reveal, 9000);
-    return () => {
-      clearInterval(interval);
-      clearTimeout(hideTimer);
-    };
+    const hideTimer = setTimeout(() => {
+      if (!hoveringRef.current) setCollapsed(true);
+    }, 2200);
+    return () => clearTimeout(hideTimer);
   }, []);
 
   const handleClick = () => {
