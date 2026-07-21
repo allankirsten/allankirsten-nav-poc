@@ -24,6 +24,7 @@ export type CaseSection = {
   body: string;
   visual?: string;    // descriptive label; renders placeholder if no visualSrc
   visualSrc?: string; // image path; renders real image when set
+  visualSrcMobile?: string; // optional art-directed crop, used below the 640px breakpoint
 };
 
 export type CaseContent = {
@@ -33,8 +34,10 @@ export type CaseContent = {
     tagline: string;
   };
   heroImage?: string;     // path or URL; renders dark placeholder if omitted
+  heroImageMobile?: string; // optional art-directed crop, used below the 640px breakpoint
   metrics: CaseMetric[];
   sections: CaseSection[];
+  gallery?: { src: string; alt?: string }[]; // photo strip rendered after the sections
   cta: string;
 };
 

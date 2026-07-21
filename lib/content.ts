@@ -14,6 +14,8 @@ export type CaseFrontmatterSection = {
   heading: string;
   summary: string;
   visual?: string;
+  visualSrc?: string;
+  visualSrcMobile?: string;
 };
 
 export type Doc = {
@@ -35,6 +37,9 @@ export type Doc = {
   /** Human-facing modular sections (case studies only), one per `##` in the body. */
   sections?: CaseFrontmatterSection[];
   heroImage?: string;
+  heroImageMobile?: string;
+  /** Photo strip rendered after the case's sections. */
+  gallery?: string[];
   /** Full markdown body (the AI-facing version). */
   body: string;
   /** Full file including frontmatter (served raw at /ai). */
@@ -90,6 +95,8 @@ function readKind(kind: "pages" | "cases"): Doc[] {
         updated: data.updated,
         sections: data.sections,
         heroImage: data.heroImage,
+        heroImageMobile: data.heroImageMobile,
+        gallery: data.gallery,
         body: content.trim(),
         raw,
       } as Doc;

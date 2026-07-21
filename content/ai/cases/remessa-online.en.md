@@ -10,6 +10,12 @@ category: "Design Leadership"
 order: 2
 featured: true
 status: archived
+heroImage: "/images/cases/remessa-online-cover.png"
+heroImageMobile: "/images/cases/remessa-online-cover-mobile.png"
+gallery:
+  - "/images/cases/remessa-online-gallery-1.jpg"
+  - "/images/cases/remessa-online-gallery-3.jpg"
+  - "/images/cases/remessa-online-gallery-4.jpg"
 lang: en
 summary: >
   I joined as the first product designer and built the team from scratch to
@@ -31,11 +37,15 @@ sections:
       and acquisition journeys redesigned. In 2021, EBANX acquired the
       company for US$229 million.
     visual: "Isolated block: design team from 1 to 12 people"
+    visualSrc: "/images/cases/remessa-online-impact.jpg"
   - heading: "The decision that mattered most"
     summary: >
       In a currency exchange fintech, trust is the product. The user is
       betting real money on a company they just met, and every screen
       needed to eliminate doubt before asking for action.
+    visual: "Signup landing with cost savings proof and rate transparency"
+    visualSrc: "/images/cases/remessa-online-decision.png"
+    visualSrcMobile: "/images/cases/remessa-online-decision-mobile.png"
   - heading: "From funnel loss to process"
     summary: >
       I led the process end to end, journey mapping, problem clustering,
@@ -43,6 +53,7 @@ sections:
       testing. Priority was the transfer-selection screen, now with fewer
       tickets, less doubt and higher mobile conversion.
     visual: "Before/after the transfer-selection screen"
+    visualSrc: "/images/cases/remessa-online-funnel.jpg"
   - heading: "Role in the exit"
     summary: >
       I was Head of Design when the Nubank partnership closed, projecting

@@ -28,6 +28,7 @@ function toCaseContent(doc: Doc): CaseContent {
 
   return {
     heroImage: doc.heroImage,
+    heroImageMobile: doc.heroImageMobile,
     hero: {
       title: doc.title,
       meta,
@@ -39,7 +40,10 @@ function toCaseContent(doc: Doc): CaseContent {
       heading: s.heading,
       body: s.summary.trim(),
       visual: s.visual,
+      visualSrc: s.visualSrc,
+      visualSrcMobile: s.visualSrcMobile,
     })),
+    gallery: (doc.gallery ?? []).map((src) => ({ src })),
     cta: DEFAULT_CTA,
   };
 }

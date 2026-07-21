@@ -10,6 +10,12 @@ category: "Design Leadership"
 order: 2
 featured: true
 status: archived
+heroImage: "/images/cases/remessa-online-cover.png"
+heroImageMobile: "/images/cases/remessa-online-cover-mobile.png"
+gallery:
+  - "/images/cases/remessa-online-gallery-1.jpg"
+  - "/images/cases/remessa-online-gallery-3.jpg"
+  - "/images/cases/remessa-online-gallery-4.jpg"
 summary: >
   Entrei como primeiro designer de produto e construí o time do zero a
   12 pessoas em 4 anos, na maior plataforma de câmbio da América Latina.
@@ -30,11 +36,15 @@ sections:
       cadastro, transferência e aquisição redesenhadas. Em 2021, o EBANX
       adquiriu a empresa por US$229 milhões.
     visual: "Bloco isolado: time de design de 1 para 12 pessoas"
+    visualSrc: "/images/cases/remessa-online-impact.jpg"
   - heading: "A decisão que mais importou"
     summary: >
       Numa fintech de câmbio, confiança é o produto. O usuário aposta
       dinheiro real numa empresa que acabou de conhecer, e cada tela
       precisava eliminar dúvida antes de pedir ação.
+    visual: "Landing de cadastro com prova de economia e transparência de taxas"
+    visualSrc: "/images/cases/remessa-online-decision.png"
+    visualSrcMobile: "/images/cases/remessa-online-decision-mobile.png"
   - heading: "Da perda de funil ao processo"
     summary: >
       Liderei o processo de ponta a ponta, journey mapping, clusterização de
@@ -42,6 +52,7 @@ sections:
       presencial. Prioridade foi a tela de seleção de transferência, hoje com
       menos ticket, menos dúvida e mais conversão mobile.
     visual: "Antes/depois da tela de seleção de transferência"
+    visualSrc: "/images/cases/remessa-online-funnel.jpg"
   - heading: "Papel no exit"
     summary: >
       Era Head of Design quando fechou a parceria com o Nubank, projetando ir

@@ -6,6 +6,7 @@ const css = `
     z-index: 1;
     overflow: hidden;
   }
+  .cover-image picture,
   .cover-image img {
     width: 100%; height: 100%;
     object-fit: cover;
@@ -27,13 +28,28 @@ const css = `
   }
 `;
 
-export function CoverImage({ src, alt = "" }: { src?: string; alt?: string }) {
+export function CoverImage({
+  src,
+  srcMobile,
+  alt = "",
+}: {
+  src?: string;
+  /** Art-directed crop for narrow viewports; falls back to `src` when omitted. */
+  srcMobile?: string;
+  alt?: string;
+}) {
+  const basePath = process.env.NEXT_PUBLIC_BASE_PATH ?? "";
   return (
     <>
       <style dangerouslySetInnerHTML={{ __html: css }} />
       <div className="cover-image">
         {src ? (
-          <img src={`${process.env.NEXT_PUBLIC_BASE_PATH ?? ""}${src}`} alt={alt} />
+          <picture>
+            {srcMobile ? (
+              <source media="(max-width: 639px)" srcSet={`${basePath}${srcMobile}`} />
+            ) : null}
+            <img src={`${basePath}${src}`} alt={alt} />
+          </picture>
         ) : (
           <div className="cover-image__ph">Visual</div>
         )}

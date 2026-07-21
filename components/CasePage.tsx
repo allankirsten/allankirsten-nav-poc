@@ -6,6 +6,7 @@ import Link from "next/link";
 import gsap from "gsap";
 import { BackButton } from "@/components/BackButton";
 import { CoverImage } from "@/components/CoverImage";
+import { ImageGallery } from "@/components/ImageGallery";
 import { renderChars, charRevealVars } from "@/lib/textReveal";
 import type { CaseContent } from "@/content/types";
 import type { CaseNavItem } from "@/lib/caseContent";
@@ -138,8 +139,12 @@ const css = `
   .case-visual-img {
     display: block;
     width: 100%;
-    height: auto;
     margin-top: 4rem;
+  }
+  .case-visual-img img {
+    display: block;
+    width: 100%;
+    height: auto;
     border: 1px solid #e8e8e8;
     border-radius: 6px;
   }
@@ -151,7 +156,7 @@ const css = `
     display: flex;
     align-items: center;
     justify-content: center;
-    margin: 4rem var(--section-px) 0;
+    margin: 4rem 0 0;
   }
   .case-placeholder-label {
     font-size: 0.625rem;
@@ -218,7 +223,7 @@ const css = `
 type CaseNav = { prev: CaseNavItem; next: CaseNavItem };
 
 export function CasePage({ content, nav }: { content: CaseContent; nav?: CaseNav }) {
-  const { hero, heroImage, metrics, sections, cta } = content;
+  const { hero, heroImage, heroImageMobile, metrics, sections, gallery, cta } = content;
 
   useLayoutEffect(() => {
     window.scrollTo(0, 0);
@@ -303,7 +308,7 @@ export function CasePage({ content, nav }: { content: CaseContent; nav?: CaseNav
         </div>
       </section>
 
-      <CoverImage src={heroImage} />
+      <CoverImage src={heroImage} srcMobile={heroImageMobile} />
 
       <div className="case-body">
         {sections.map((s, i) => (
@@ -314,11 +319,15 @@ export function CasePage({ content, nav }: { content: CaseContent; nav?: CaseNav
               <p className="section-body">{s.body}</p>
             </div>
             {s.visualSrc ? (
-              <img
-                src={`${process.env.NEXT_PUBLIC_BASE_PATH ?? ""}${s.visualSrc}`}
-                alt={s.visual ?? ""}
-                className="case-visual-img"
-              />
+              <picture className="case-visual-img">
+                {s.visualSrcMobile ? (
+                  <source
+                    media="(max-width: 639px)"
+                    srcSet={`${process.env.NEXT_PUBLIC_BASE_PATH ?? ""}${s.visualSrcMobile}`}
+                  />
+                ) : null}
+                <img src={`${process.env.NEXT_PUBLIC_BASE_PATH ?? ""}${s.visualSrc}`} alt={s.visual ?? ""} />
+              </picture>
             ) : s.visual ? (
               <div className="case-placeholder">
                 <span className="case-placeholder-label">Visual: {s.visual}</span>
@@ -326,6 +335,8 @@ export function CasePage({ content, nav }: { content: CaseContent; nav?: CaseNav
             ) : null}
           </div>
         ))}
+
+        {gallery && gallery.length > 0 ? <ImageGallery images={gallery} /> : null}
       </div>
 
       {nav ? (
