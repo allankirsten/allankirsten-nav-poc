@@ -174,7 +174,10 @@ export function Navigation() {
     const id = href.slice(hashPos + 1);
     if (pathname === targetPath) {
       e.preventDefault();
-      if (scrollToHomeSection(id)) window.history.replaceState(null, "", href);
+      if (scrollToHomeSection(id)) {
+        const basePath = process.env.NEXT_PUBLIC_BASE_PATH ?? "";
+        window.history.replaceState(null, "", `${basePath}${href}`);
+      }
     }
   };
 
