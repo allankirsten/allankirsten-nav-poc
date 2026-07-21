@@ -6,7 +6,6 @@ const DEFAULT_LANG = "en";
 
 /** Cases with a page on the human site, single source of truth (also used by app/sitemap.ts). */
 export const HUMAN_CASE_SLUGS = [
-  "bipa",
   "remessa-online",
   "easy-carros",
   "betterfly",

@@ -14,6 +14,7 @@ import { ContactFrame } from "@/components/ContactFrame";
 import { WorkFrame } from "@/components/WorkFrame";
 import { BrandsMarquee } from "@/components/BrandsMarquee";
 import { renderChars, charRevealVars } from "@/lib/textReveal";
+import { scrollToHomeSection } from "@/lib/homeScroll";
 import type { Frame, Testimonial, WorkItem } from "@/content/types";
 
 type HomeSection =
@@ -30,7 +31,7 @@ const homeSections: HomeSection[] = [
   ...frames.slice(0, provIdx + 1).map((frame) => ({ kind: "frame" as const, frame })),
   { kind: "brands" as const, id: "marcas", bg: "#111" },
   ...frames.slice(provIdx + 1, identIdx + 1).map((frame) => ({ kind: "frame" as const, frame })),
-  { kind: "work" as const, id: "prova", label: "04", bg: "#fff", text: "#000", items: workItems },
+  { kind: "work" as const, id: "work", label: "04", bg: "#fff", text: "#000", items: workItems },
   ...frames.slice(identIdx + 1, credIdx + 1).map((frame) => ({ kind: "frame" as const, frame })),
   { kind: "testimonials" as const, id: "depoimentos", label: "07", bg: "#000", text: "#fff", testimonials },
   ...frames.slice(credIdx + 1).map((frame) => ({ kind: "frame" as const, frame })),
@@ -119,7 +120,7 @@ export default function Home() {
       cumulative += document.getElementById(id)?.offsetHeight ?? vh;
     });
 
-    // A URL hash (e.g. nav link to /#prova from another page) jumps straight to that frame,
+    // A URL hash (e.g. nav link to /#work from another page) jumps straight to that frame,
     // same as restoring a saved scroll position — the sticky-frame layout isn't ready
     // for the browser's native hash-scroll until heights are measured above.
     const savedRaw = sessionStorage.getItem(SCROLL_KEY);
@@ -296,13 +297,38 @@ export default function Home() {
     });
 
     if (restoringScroll) {
-      const doScroll = () => window.scrollTo({ top: targetY, behavior: "instant" });
+      // Hash jumps re-measure live (`scrollToHomeSection`) instead of trusting
+      // the `frameTops` snapshot above — that snapshot can be stale by the
+      // time this runs if images/fonts shift layout after mount. A saved
+      // scroll position (session restore) is an absolute pixel value with
+      // nothing to re-measure, so it uses `targetY` directly.
+      const doScroll = () => {
+        if (hashId) scrollToHomeSection(hashId);
+        else window.scrollTo({ top: targetY, behavior: "instant" });
+      };
       requestAnimationFrame(() => requestAnimationFrame(doScroll));
       setTimeout(doScroll, 100);
       setTimeout(doScroll, 250);
+      // Final correction once every image/font has actually finished loading.
+      if (document.readyState === "complete") doScroll();
+      else window.addEventListener("load", doScroll, { once: true });
     }
 
-    return () => { ScrollTrigger.getAll().forEach((t) => t.kill()); };
+    return () => {
+      ScrollTrigger.getAll().forEach((t) => t.kill());
+    };
+  }, []);
+
+  // Same-page hash changes (e.g. clicking "Work" while already on "/") don't
+  // remount this component, so the jump above never re-runs for them. This
+  // listens for the whole component's lifetime and re-runs just the scroll.
+  useEffect(() => {
+    const onHashChange = () => {
+      const id = window.location.hash.slice(1);
+      if (id) scrollToHomeSection(id);
+    };
+    window.addEventListener("hashchange", onHashChange);
+    return () => window.removeEventListener("hashchange", onHashChange);
   }, []);
 
   const saveScroll = () => sessionStorage.setItem(SCROLL_KEY, String(window.scrollY));

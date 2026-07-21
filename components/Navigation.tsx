@@ -5,10 +5,11 @@ import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import gsap from "gsap";
+import { scrollToHomeSection } from "@/lib/homeScroll";
 
 const NAV_LINKS = [
   { label: "Home", href: "/" },
-  { label: "Work", href: "/#prova" },
+  { label: "Work", href: "/#work" },
   { label: "Method", href: "/how-i-work" },
   { label: "About", href: "/about" },
   { label: "Contact", href: "mailto:allankirsten@gmail.com" },
@@ -61,7 +62,7 @@ function NavLink({
   label: string;
   active: boolean;
   theme: BgTheme;
-  onClick?: () => void;
+  onClick?: (e: React.MouseEvent<HTMLAnchorElement>) => void;
   mobile?: boolean;
 }) {
   const t = THEMES[theme];
@@ -162,6 +163,21 @@ export function Navigation() {
     return href === pathname;
   };
 
+  // Next's <Link> is a same-route no-op for hash-only changes — clicking
+  // "Work" while already on "/" would otherwise never scroll anywhere,
+  // since the home page's own hash handling only runs on mount/hashchange.
+  // Intercept it here and scroll directly instead of navigating.
+  const handleHashNav = (e: React.MouseEvent<HTMLAnchorElement>, href: string) => {
+    const hashPos = href.indexOf("#");
+    if (hashPos === -1) return;
+    const targetPath = href.slice(0, hashPos) || "/";
+    const id = href.slice(hashPos + 1);
+    if (pathname === targetPath) {
+      e.preventDefault();
+      if (scrollToHomeSection(id)) window.history.replaceState(null, "", href);
+    }
+  };
+
   const t = THEMES[bgTheme];
 
   return (
@@ -188,7 +204,14 @@ export function Navigation() {
 
       <nav className="hidden md:flex" style={{ alignItems: "center", gap: "2rem" }}>
         {NAV_LINKS.map((link) => (
-          <NavLink key={link.href} href={link.href} label={link.label} active={isActive(link.href)} theme={bgTheme} />
+          <NavLink
+            key={link.href}
+            href={link.href}
+            label={link.label}
+            active={isActive(link.href)}
+            theme={bgTheme}
+            onClick={(e) => handleHashNav(e, link.href)}
+          />
         ))}
       </nav>
 
@@ -255,7 +278,7 @@ export function Navigation() {
             <Link
               key={link.href}
               href={link.href}
-              onClick={closeMenu}
+              onClick={(e) => { handleHashNav(e, link.href); closeMenu(); }}
               ref={(el) => { linkRefs.current[i] = el; }}
               style={{
                 fontFamily: "var(--font-display)",
