@@ -1,10 +1,12 @@
 "use client";
 
 import { useEffect, useLayoutEffect } from "react";
+import type { CSSProperties } from "react";
 import Link from "next/link";
 import gsap from "gsap";
 import { BackButton } from "@/components/BackButton";
-import { ImgFull } from "@/components/ImgFull";
+import { CoverImage } from "@/components/CoverImage";
+import { renderChars, charRevealVars } from "@/lib/textReveal";
 import type { CaseContent } from "@/content/types";
 import type { CaseNavItem } from "@/lib/caseContent";
 
@@ -15,15 +17,18 @@ const css = `
     min-height: 100vh;
   }
   .case-hero {
+    --hero-pb: clamp(3rem, 6vw, 5rem);
     position: relative;
     z-index: 2;
     background: #fff;
     display: flex;
     flex-direction: column;
-    justify-content: space-between;
-    height: 100dvh;
+    min-height: 100dvh;
     box-sizing: border-box;
-    padding: clamp(5rem, 10vw, 8rem) var(--section-px) clamp(3rem, 6vw, 5rem);
+    padding: clamp(5rem, 10vw, 8rem) var(--section-px) var(--hero-pb);
+  }
+  @media (max-width: 639px) {
+    .case-hero { padding-top: 9rem; }
   }
   .case-title {
     font-family: var(--font-display);
@@ -40,7 +45,6 @@ const css = `
     flex-wrap: wrap;
     gap: 2rem;
     margin-top: 3rem;
-    margin-bottom: 2.5rem;
   }
   .case-meta-item { display: flex; flex-direction: column; gap: 0.25rem; }
   .case-meta-label {
@@ -57,27 +61,36 @@ const css = `
     max-width: 52ch;
     line-height: 1.5;
     letter-spacing: 0.02em;
+    flex: 1;
+    display: flex;
+    flex-wrap: wrap;
+    align-content: center;
+  }
+  @media (max-width: 639px) {
+    .case-tagline {
+      font-size: 1.375rem;
+      color: #555;
+    }
   }
   .case-metrics {
     display: grid;
-    grid-template-columns: repeat(2, 1fr);
+    grid-template-columns: 1fr;
     border-top: 1px solid #e5e5e5;
     margin-inline: calc(-1 * var(--section-px));
+    margin-bottom: calc(-1 * var(--hero-pb));
     width: calc(100% + 2 * var(--section-px));
   }
   .metric-cell {
-    padding: clamp(2rem, 5vw, 4rem) var(--section-px);
-    border-right: 1px solid #e5e5e5;
+    padding: clamp(1.5rem, 4vw, 2.5rem) var(--section-px);
     border-bottom: 1px solid #e5e5e5;
   }
-  .metric-cell:nth-child(even) { border-right: none; }
+  .metric-cell:last-child { border-bottom: none; }
   .metric-value {
     font-family: var(--font-display);
-    font-size: clamp(3rem, 8vw, 6.5rem);
-    line-height: 0.9;
-    letter-spacing: -0.02em;
+    font-size: clamp(1.375rem, 1.8vw, 2rem);
+    line-height: 1.25;
+    letter-spacing: -0.01em;
     font-weight: 400;
-    will-change: transform, opacity;
   }
   .metric-label {
     font-size: 0.75rem;
@@ -110,6 +123,9 @@ const css = `
     letter-spacing: -0.01em;
     font-weight: 400;
     color: #000;
+  }
+  @media (max-width: 639px) {
+    .section-heading { margin-top: 2rem; }
   }
   .section-body {
     font-size: 1.0625rem;
@@ -192,9 +208,8 @@ const css = `
     .crosslink--prev { border-bottom: none; border-right: 1px solid #e5e5e5; }
   }
   @media (min-width: 640px) {
-    .case-metrics { grid-template-columns: repeat(4, 1fr); }
-    .metric-cell { border-bottom: none; }
-    .metric-cell:nth-child(even) { border-right: 1px solid #e5e5e5; }
+    .case-metrics { grid-template-columns: repeat(var(--metrics-count), 1fr); }
+    .metric-cell { border-bottom: none; border-right: 1px solid #e5e5e5; }
     .metric-cell:last-child { border-right: none; }
   }
 `;
@@ -215,8 +230,6 @@ export function CasePage({ content, nav }: { content: CaseContent; nav?: CaseNav
       { opacity: 1, y: 0, duration: 0.9, ease: "power3.out" }, 0);
     tl.fromTo(".case-meta-item", { opacity: 0, y: 20 },
       { opacity: 1, y: 0, duration: 0.7, ease: "power2.out", stagger: 0.08 }, 0.45);
-    tl.fromTo(".case-tagline", { opacity: 0, y: 20 },
-      { opacity: 1, y: 0, duration: 0.7, ease: "power2.out" }, 1.0);
 
     tl.fromTo(".case-metrics", { borderTopColor: "rgba(229,229,229,0)" },
       { borderTopColor: "#e5e5e5", duration: 0.5, ease: "power1.out" }, 1.2);
@@ -231,7 +244,7 @@ export function CasePage({ content, nav }: { content: CaseContent; nav?: CaseNav
 
       tl.fromTo(cell,
         { opacity: 0, y: 32, borderColor: "rgba(229,229,229,0)" },
-        { opacity: 1, y: 0, borderColor: "#e5e5e5", duration: 0.7, ease: "power3.out" },
+        { opacity: 1, y: 0, borderColor: "#e5e5e5", duration: 0.7, ease: "power3.out", clearProps: "transform" },
         start
       );
 
@@ -246,26 +259,40 @@ export function CasePage({ content, nav }: { content: CaseContent; nav?: CaseNav
       }
     });
 
+    // Tagline reveals last, after every metric has entered — same
+    // char-by-char cadence as the home hero's subtext.
+    const metricsEnd = 1.2 + Math.max(0, metrics.length - 1) * 0.08 + 0.7;
+    const subChars = document.querySelectorAll<HTMLElement>(".case-tagline .sub-char");
+    if (subChars.length) {
+      const { from, to } = charRevealVars(hero.tagline);
+      tl.fromTo(subChars, from, to, metricsEnd + 0.1);
+    }
+
     return () => { tl.kill(); };
-  }, [metrics]);
+  }, [metrics, hero.tagline]);
 
   return (
     <main className="case-page">
       <style dangerouslySetInnerHTML={{ __html: css }} />
 
       <section className="case-hero">
-        <h1 className="case-title" style={{ opacity: 0 }}>{hero.title}</h1>
-        <div className="case-meta">
-          {hero.meta.map((m) => (
-            <div key={m.label} className="case-meta-item" style={{ opacity: 0 }}>
-              <span className="case-meta-label">{m.label}</span>
-              <span className="case-meta-value">{m.value}</span>
-            </div>
-          ))}
+        <div className="case-heading-group">
+          <h1 className="case-title" style={{ opacity: 0 }}>{hero.title}</h1>
+          <div className="case-meta">
+            {hero.meta.map((m) => (
+              <div key={m.label} className="case-meta-item" style={{ opacity: 0 }}>
+                <span className="case-meta-label">{m.label}</span>
+                <span className="case-meta-value">{m.value}</span>
+              </div>
+            ))}
+          </div>
         </div>
-        <p className="case-tagline" style={{ opacity: 0 }}>{hero.tagline}</p>
+        <p className="case-tagline">{renderChars(hero.tagline)}</p>
 
-        <div className="case-metrics" style={{ borderTopColor: "rgba(229,229,229,0)" }}>
+        <div
+          className="case-metrics"
+          style={{ borderTopColor: "rgba(229,229,229,0)", "--metrics-count": metrics.length } as CSSProperties}
+        >
           {metrics.map((m) => (
             <div key={m.label} className="metric-cell" style={{ opacity: 0, borderColor: "rgba(229,229,229,0)" }}>
               <p className="metric-value">{m.count !== undefined ? `${m.prefix ?? ""}0${m.suffix ?? ""}` : m.display}</p>
@@ -275,7 +302,7 @@ export function CasePage({ content, nav }: { content: CaseContent; nav?: CaseNav
         </div>
       </section>
 
-      <ImgFull src={heroImage} />
+      <CoverImage src={heroImage} />
 
       <div className="case-body">
         {sections.map((s, i) => (
@@ -319,7 +346,7 @@ export function CasePage({ content, nav }: { content: CaseContent; nav?: CaseNav
         </p>
       </footer>
 
-      <BackButton fallback="/" label="Home" forceFallback />
+      <BackButton fallback="/" forceFallback />
     </main>
   );
 }

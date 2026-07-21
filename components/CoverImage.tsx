@@ -1,19 +1,19 @@
 const css = `
-  .img-full {
+  .cover-image {
     position: fixed;
     top: 0; left: 0; right: 0;
     height: 100dvh;
     z-index: 1;
     overflow: hidden;
   }
-  .img-full img {
+  .cover-image img {
     width: 100%; height: 100%;
     object-fit: cover;
     display: block;
   }
-  .img-full__ph {
+  .cover-image__ph {
     width: 100%; height: 100%;
-    background: #111;
+    background: linear-gradient(180deg, #141414, #0d0d0d);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -22,23 +22,23 @@ const css = `
     text-transform: uppercase;
     color: #333;
   }
-  .img-full__space {
+  .cover-image__space {
     height: 100dvh;
   }
 `;
 
-export function ImgFull({ src, alt = "" }: { src?: string; alt?: string }) {
+export function CoverImage({ src, alt = "" }: { src?: string; alt?: string }) {
   return (
     <>
       <style dangerouslySetInnerHTML={{ __html: css }} />
-      <div className="img-full">
+      <div className="cover-image">
         {src ? (
           <img src={`${process.env.NEXT_PUBLIC_BASE_PATH ?? ""}${src}`} alt={alt} />
         ) : (
-          <div className="img-full__ph">Visual</div>
+          <div className="cover-image__ph">Visual</div>
         )}
       </div>
-      <div className="img-full__space" />
+      <div className="cover-image__space" />
     </>
   );
 }

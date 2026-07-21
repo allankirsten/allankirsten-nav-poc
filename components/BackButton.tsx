@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 
 export function BackButton({
@@ -10,15 +10,30 @@ export function BackButton({
 }: {
   fallback?: string;
   label?: string;
-  /** Always navigate to `fallback` instead of `router.back()`. Use when the label promises a specific destination (e.g. "Home") that browser history can't guarantee — cross-links between pages of the same kind (case-to-case, for example) make plain `back()` land somewhere other than what the label says. */
+  /** Always navigate to `fallback` instead of `router.back()`. Use when browser history can't guarantee landing on `fallback` — cross-links between pages of the same kind (case-to-case, for example) make plain `back()` land somewhere other than the intended destination. */
   forceFallback?: boolean;
 }) {
   const [collapsed, setCollapsed] = useState(false);
+  const hoveringRef = useRef(false);
   const router = useRouter();
 
+  // Reveals the label briefly, then collapses back — repeating on a calm
+  // cycle so the label also comes back on touch devices, which have no
+  // hover to bring it back after the initial reveal.
   useEffect(() => {
-    const t = setTimeout(() => setCollapsed(true), 2800);
-    return () => clearTimeout(t);
+    let hideTimer: ReturnType<typeof setTimeout>;
+    const reveal = () => {
+      setCollapsed(false);
+      hideTimer = setTimeout(() => {
+        if (!hoveringRef.current) setCollapsed(true);
+      }, 2200);
+    };
+    reveal();
+    const interval = setInterval(reveal, 9000);
+    return () => {
+      clearInterval(interval);
+      clearTimeout(hideTimer);
+    };
   }, []);
 
   const handleClick = () => {
@@ -32,8 +47,8 @@ export function BackButton({
   return (
     <button
       onClick={handleClick}
-      onMouseEnter={() => setCollapsed(false)}
-      onMouseLeave={() => setCollapsed(true)}
+      onMouseEnter={() => { hoveringRef.current = true; setCollapsed(false); }}
+      onMouseLeave={() => { hoveringRef.current = false; setCollapsed(true); }}
       aria-label={label}
       style={{
         position: "fixed",
@@ -43,18 +58,18 @@ export function BackButton({
         display: "inline-flex",
         alignItems: "center",
         justifyContent: "center",
-        gap: "0.6rem",
+        gap: collapsed ? 0 : "0.6rem",
         background: "#000",
         color: "#fff",
         borderRadius: "999px",
         height: "56px",
-        paddingLeft: collapsed ? "1rem" : "1.5rem",
-        paddingRight: collapsed ? "1rem" : "1.75rem",
+        paddingLeft: collapsed ? "19px" : "1.5rem",
+        paddingRight: collapsed ? "19px" : "1.75rem",
         border: "none",
         cursor: "pointer",
         overflow: "hidden",
         boxSizing: "border-box",
-        transition: "padding 0.45s cubic-bezier(0.4, 0, 0.2, 1)",
+        transition: "padding 0.45s cubic-bezier(0.4, 0, 0.2, 1), gap 0.45s cubic-bezier(0.4, 0, 0.2, 1)",
         WebkitTapHighlightColor: "transparent",
       }}
     >
@@ -63,7 +78,7 @@ export function BackButton({
         height="18"
         viewBox="0 0 18 18"
         fill="none"
-        style={{ flexShrink: 0, display: "block" }}
+        style={{ flexShrink: 0, display: "block", marginLeft: collapsed ? "-2px" : 0, transition: "margin-left 0.45s cubic-bezier(0.4, 0, 0.2, 1)" }}
       >
         <path d="M11 3.5L5.5 9 11 14.5" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" />
       </svg>

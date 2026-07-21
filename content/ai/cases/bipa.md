@@ -10,6 +10,7 @@ category: "Product & Growth"
 order: 1
 featured: true
 status: active
+heroImage: "/images/cases/bipa-cartoes-fisicos.jpg"
 summary: >
   Fintech Bitcoin-native, 300 mil usuários. Virei um site institucional
   em plataforma de aquisição: 93 PRs em 4 meses, cadastro web com 29,9%

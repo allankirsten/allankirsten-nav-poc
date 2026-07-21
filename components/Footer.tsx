@@ -4,6 +4,8 @@ export function Footer() {
   return (
     <footer
       style={{
+        position: "relative",
+        zIndex: 2,
         background: "#000",
         padding: "1.75rem var(--section-px)",
         display: "flex",

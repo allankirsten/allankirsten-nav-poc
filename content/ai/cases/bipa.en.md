@@ -10,6 +10,7 @@ category: "Product & Growth"
 order: 1
 featured: true
 status: active
+heroImage: "/images/cases/bipa-cartoes-fisicos.jpg"
 lang: en
 summary: >
   Bitcoin-native fintech, 300 thousand users. I turned a marketing site

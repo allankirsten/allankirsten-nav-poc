@@ -10,6 +10,7 @@ category: "Founder"
 order: 6
 featured: false
 status: archived
+heroImage: "/images/cases/foodastic-cover.png"
 lang: en
 summary: >
   I co-founded a concept bar and restaurant in Bombinhas, SC, with no prior

@@ -10,6 +10,7 @@ category: "Founder"
 order: 6
 featured: false
 status: archived
+heroImage: "/images/cases/foodastic-cover.png"
 summary: >
   Co-fundei um bar e restaurante de conceito em Bombinhas, SC, sem
   experiência prévia em gastronomia. Break even no primeiro ano com

@@ -72,3 +72,47 @@ export function getSubCharDelays(text: string) {
   }
   return delays;
 }
+
+/**
+ * The house char-reveal tween, as a {from, to} pair instead of a live tween:
+ * every caller positions it differently (a bare `delay`, a spot in someone
+ * else's GSAP timeline), so this stays agnostic to how it gets played.
+ * `extra` merges into `to` — pass `{ delay }` or a timeline `position`, etc.
+ * For a short line only (home frame sub, case tagline) — the letter-by-letter
+ * pace is itself part of the effect. For paragraph-length subtext, that same
+ * pace reads as frantic; use `wordRevealVars` instead.
+ */
+export function charRevealVars(text: string, extra?: gsap.TweenVars) {
+  const delays = getSubCharDelays(text);
+  return {
+    from: { opacity: 0, y: 12 } as gsap.TweenVars,
+    to: {
+      opacity: 1,
+      y: 0,
+      stagger: (i: number) => delays[i],
+      duration: 0.6,
+      ease: "power2.out",
+      ...extra,
+    } as gsap.TweenVars,
+  };
+}
+
+/**
+ * A calm, word-by-word fade for paragraph-length subtext (/about,
+ * /how-i-work) — pairs with `renderWords`, not `renderChars`. A plain,
+ * even stagger reads as settled; no per-word pause logic, no y-jump or
+ * scale like the title reveal, just opacity easing in one word at a time.
+ */
+export function wordRevealVars(extra?: gsap.TweenVars) {
+  return {
+    from: { opacity: 0, y: 6 } as gsap.TweenVars,
+    to: {
+      opacity: 1,
+      y: 0,
+      stagger: 0.09,
+      duration: 0.8,
+      ease: "power1.out",
+      ...extra,
+    } as gsap.TweenVars,
+  };
+}

@@ -4,7 +4,7 @@ import { useEffect } from "react";
 import Link from "next/link";
 import gsap from "gsap";
 import { BackButton } from "@/components/BackButton";
-import { renderWords, renderChars, getSubCharDelays } from "@/lib/textReveal";
+import { renderWords, wordRevealVars } from "@/lib/textReveal";
 
 const css = `
   .atw-page {
@@ -274,15 +274,16 @@ const crawlerTags = ["GPTBot", "ChatGPT-User", "ClaudeBot", "Claude-Web", "anthr
 export default function AboutThisWebsite() {
   useEffect(() => {
     const words = document.querySelectorAll<HTMLElement>(".atw-title .word");
-    const subChars = document.querySelectorAll<HTMLElement>(".atw-subhead .sub-char");
-    const subDelays = getSubCharDelays(ATW_SUBHEAD);
+    const subWords = document.querySelectorAll<HTMLElement>(".atw-subhead .word");
 
     gsap.fromTo(".atw-eyebrow", { opacity: 0, y: -28 },
       { opacity: 1, y: 0, duration: 0.9, ease: "power2.out" });
     if (words.length) gsap.fromTo(words, { opacity: 0, y: 40, scale: 0.96 },
       { opacity: 1, y: 0, scale: 1, stagger: 0.1521, duration: 1.69, ease: "power3.out", delay: 0.15 });
-    if (subChars.length) gsap.fromTo(subChars, { opacity: 0, y: 12 },
-      { opacity: 1, y: 0, stagger: (i: number) => subDelays[i], duration: 0.6, ease: "power2.out", delay: 0.4 });
+    if (subWords.length) {
+      const { from, to } = wordRevealVars({ delay: 0.4 });
+      gsap.fromTo(subWords, from, to);
+    }
   }, []);
 
   return (
@@ -293,7 +294,7 @@ export default function AboutThisWebsite() {
         <span className="atw-eyebrow">Process</span>
         <div>
           <h1 className="atw-title">{renderWords("Nobody builds this for me.")}</h1>
-          <p className="atw-subhead">{renderChars(ATW_SUBHEAD)}</p>
+          <p className="atw-subhead">{renderWords(ATW_SUBHEAD)}</p>
         </div>
       </section>
 
@@ -533,7 +534,7 @@ export default function AboutThisWebsite() {
         </Link>
       </section>
 
-      <BackButton fallback="/" label="Home" />
+      <BackButton fallback="/" />
     </main>
   );
 }

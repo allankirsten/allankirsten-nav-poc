@@ -13,6 +13,7 @@ import { TestimonialsFrame } from "@/components/TestimonialsFrame";
 import { ContactFrame } from "@/components/ContactFrame";
 import { WorkFrame } from "@/components/WorkFrame";
 import { BrandsMarquee } from "@/components/BrandsMarquee";
+import { renderChars, charRevealVars } from "@/lib/textReveal";
 import type { Frame, Testimonial, WorkItem } from "@/content/types";
 
 type HomeSection =
@@ -64,15 +65,6 @@ function parseTitle(title: string, links?: Record<string, string>) {
   return segments;
 }
 
-// Splits text into individual char spans for letter-by-letter reveal animations.
-function renderChars(text: string) {
-  return text.split("").map((ch, i) => (
-    <span key={i} className="sub-char" style={{ display: "inline-block", whiteSpace: "pre" }}>
-      {ch}
-    </span>
-  ));
-}
-
 // Renders a title's words as spans, grouping linked phrases into <Link> elements.
 function renderTitleWords(frame: Frame, onLinkClick: () => void) {
   const segments = parseTitle(frame.title, frame.links);
@@ -107,26 +99,6 @@ function renderTitleWords(frame: Frame, onLinkClick: () => void) {
     }
     return <span key={si}>{wordSpans}</span>;
   });
-}
-
-// Computes per-character entry delays so the reveal pauses naturally at spaces, commas, and periods.
-function getSubCharDelays(text: string) {
-  const BASE = 0.045;
-  const SPACE_PAUSE = 0.09;
-  const COMMA_PAUSE = 0.28;
-  const PERIOD_PAUSE = 0.45;
-  const delays: number[] = [];
-  let t = 0;
-  for (let i = 0; i < text.length; i++) {
-    delays.push(t);
-    const ch = text[i];
-    let gap = BASE;
-    if (ch === ",") gap += COMMA_PAUSE;
-    else if (ch === ".") gap += PERIOD_PAUSE;
-    else if (ch === " ") gap += SPACE_PAUSE;
-    t += gap;
-  }
-  return delays;
 }
 
 const SCROLL_KEY = "homeScrollY";
@@ -260,7 +232,6 @@ export default function Home() {
       const frame = section.frame;
       const words = frameEl.querySelectorAll<HTMLElement>(".word");
       const subChars = frameEl.querySelectorAll<HTMLElement>(".sub-char");
-      const subDelays = getSubCharDelays(frame.sub);
       const ctaEl = frameEl.querySelector<HTMLElement>(".frame-cta");
 
       if (!words.length) return;
@@ -287,8 +258,10 @@ export default function Home() {
           gsap.fromTo(words, { opacity: 0, y: 40, scale: 0.96 },
             { opacity: 1, y: 0, scale: 1, stagger: 0.1521, duration: 1.69, ease: "power3.out", delay: 0.15 });
 
-          if (subChars.length) gsap.fromTo(subChars, { opacity: 0, y: 12 },
-            { opacity: 1, y: 0, stagger: (idx: number) => subDelays[idx], duration: 0.6, ease: "power2.out", delay: 0.4 });
+          if (subChars.length) {
+            const { from, to } = charRevealVars(frame.sub, { delay: 0.4 });
+            gsap.fromTo(subChars, from, to);
+          }
 
           if (cueEl) gsap.fromTo(cueEl, { opacity: 0, y: -8 }, {
             opacity: 1, y: 0, duration: 0.6, ease: "power2.out", delay: 0.6,
@@ -309,10 +282,13 @@ export default function Home() {
         opacity: 1, y: 0, scale: 1, stagger: 0.1521, duration: 1.69, ease: "power3.out",
         scrollTrigger: { start: frameStart - 120, end: frameStart + frameHeight * 0.25, toggleActions: "play none none none" },
       });
-      if (subChars.length) gsap.fromTo(subChars, { opacity: 0, y: 12 }, {
-        opacity: 1, y: 0, stagger: (idx: number) => subDelays[idx], duration: 0.6, ease: "power2.out", delay: wordDelay,
-        scrollTrigger: { start: frameStart - 120, end: frameStart + frameHeight * 0.25, toggleActions: "play none none none" },
-      });
+      if (subChars.length) {
+        const { from, to } = charRevealVars(frame.sub, {
+          delay: wordDelay,
+          scrollTrigger: { start: frameStart - 120, end: frameStart + frameHeight * 0.25, toggleActions: "play none none none" },
+        });
+        gsap.fromTo(subChars, from, to);
+      }
       if (ctaEl) gsap.fromTo(ctaEl, { opacity: 0, y: 12 }, {
         opacity: 1, y: 0, duration: 0.5, ease: "power2.out", delay: wordDelay + 0.3,
         scrollTrigger: { start: frameStart - 120, end: frameStart + frameHeight * 0.25, toggleActions: "play none none none" },

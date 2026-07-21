@@ -4,7 +4,7 @@ import { useEffect } from "react";
 import gsap from "gsap";
 import { BackButton } from "@/components/BackButton";
 import { howIWorkContent } from "@/content/how-i-work";
-import { renderWords, renderChars, getSubCharDelays } from "@/lib/textReveal";
+import { renderWords, wordRevealVars } from "@/lib/textReveal";
 
 const BIPA_CAST_URL = "https://www.youtube.com/watch?v=MF_56tmqwaU&list=PLa0LRF9MEUIrs5g-GSejXKvNiASj02Ngq&index=7";
 
@@ -135,15 +135,16 @@ export default function HowIWork() {
 
   useEffect(() => {
     const words = document.querySelectorAll<HTMLElement>(".hiw-title .word");
-    const subChars = document.querySelectorAll<HTMLElement>(".hiw-tagline .sub-char");
-    const subDelays = getSubCharDelays(tagline);
+    const subWords = document.querySelectorAll<HTMLElement>(".hiw-tagline .word");
 
     gsap.fromTo(".hiw-eyebrow", { opacity: 0, y: -28 },
       { opacity: 1, y: 0, duration: 0.9, ease: "power2.out" });
     if (words.length) gsap.fromTo(words, { opacity: 0, y: 40, scale: 0.96 },
       { opacity: 1, y: 0, scale: 1, stagger: 0.1521, duration: 1.69, ease: "power3.out", delay: 0.15 });
-    if (subChars.length) gsap.fromTo(subChars, { opacity: 0, y: 12 },
-      { opacity: 1, y: 0, stagger: (i: number) => subDelays[i], duration: 0.6, ease: "power2.out", delay: 0.4 });
+    if (subWords.length) {
+      const { from, to } = wordRevealVars({ delay: 0.4 });
+      gsap.fromTo(subWords, from, to);
+    }
   }, [tagline]);
 
   return (
@@ -154,7 +155,7 @@ export default function HowIWork() {
         <span className="hiw-eyebrow">Method</span>
         <div>
           <h1 className="hiw-title">{renderWords("How I")}<br />{renderWords("Work.")}</h1>
-          <p className="hiw-tagline">{renderChars(tagline)}</p>
+          <p className="hiw-tagline">{renderWords(tagline)}</p>
         </div>
       </section>
 
@@ -201,7 +202,7 @@ export default function HowIWork() {
         </p>
       </footer>
 
-      <BackButton fallback="/" label="Home" />
+      <BackButton fallback="/" />
     </main>
   );
 }

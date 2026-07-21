@@ -10,6 +10,7 @@ category: "Design & Discovery"
 order: 5
 featured: false
 status: archived
+heroImage: "/images/cases/xerpay-cover.jpg"
 lang: en
 summary: >
   Product Design Lead at a salary advance fintech, 45 companies and 60

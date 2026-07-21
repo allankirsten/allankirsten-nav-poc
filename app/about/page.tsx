@@ -5,7 +5,7 @@ import Link from "next/link";
 import gsap from "gsap";
 import { BackButton } from "@/components/BackButton";
 import { ImageGallery } from "@/components/ImageGallery";
-import { renderWords, renderChars, getSubCharDelays } from "@/lib/textReveal";
+import { renderWords, wordRevealVars } from "@/lib/textReveal";
 import { contact } from "@/content/contact";
 
 const css = `
@@ -134,15 +134,16 @@ const ABOUT_SUBHEAD = "Product and design leader, 23 years into a career that st
 export default function About() {
   useEffect(() => {
     const words = document.querySelectorAll<HTMLElement>(".about-title .word");
-    const subChars = document.querySelectorAll<HTMLElement>(".about-subhead .sub-char");
-    const subDelays = getSubCharDelays(ABOUT_SUBHEAD);
+    const subWords = document.querySelectorAll<HTMLElement>(".about-subhead .word");
 
     gsap.fromTo(".about-eyebrow", { opacity: 0, y: -28 },
       { opacity: 1, y: 0, duration: 0.9, ease: "power2.out" });
     if (words.length) gsap.fromTo(words, { opacity: 0, y: 40, scale: 0.96 },
       { opacity: 1, y: 0, scale: 1, stagger: 0.1521, duration: 1.69, ease: "power3.out", delay: 0.15 });
-    if (subChars.length) gsap.fromTo(subChars, { opacity: 0, y: 12 },
-      { opacity: 1, y: 0, stagger: (i: number) => subDelays[i], duration: 0.6, ease: "power2.out", delay: 0.4 });
+    if (subWords.length) {
+      const { from, to } = wordRevealVars({ delay: 0.4 });
+      gsap.fromTo(subWords, from, to);
+    }
   }, []);
 
   return (
@@ -153,7 +154,7 @@ export default function About() {
         <span className="about-eyebrow">About</span>
         <div>
           <h1 className="about-title">{renderWords("Hi, I'm Allan.")}</h1>
-          <p className="about-subhead">{renderChars(ABOUT_SUBHEAD)}</p>
+          <p className="about-subhead">{renderWords(ABOUT_SUBHEAD)}</p>
         </div>
       </section>
 
@@ -237,7 +238,7 @@ export default function About() {
         </Link>
       </section>
 
-      <BackButton fallback="/" label="Home" forceFallback />
+      <BackButton fallback="/" forceFallback />
     </main>
   );
 }

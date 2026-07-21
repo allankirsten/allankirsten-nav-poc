@@ -10,6 +10,7 @@ category: "Design & Discovery"
 order: 5
 featured: false
 status: archived
+heroImage: "/images/cases/xerpay-cover.jpg"
 summary: >
   Product Design Lead numa fintech de antecipação salarial, 45 empresas
   e 60 mil usuários. Transformei o processo de discovery e derrubei o
