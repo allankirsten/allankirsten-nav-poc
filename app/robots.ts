@@ -7,23 +7,14 @@ const SITE = process.env.NEXT_PUBLIC_SITE_URL || "https://allankirsten.com";
  * Absence of a blocking rule already means "allowed", but naming these
  * out loud is a clear, checkable signal of intent.
  */
+// This build is currently staged at allankirsten.com/2026, not its own
+// indexable site — disallow everything here too (belt and suspenders
+// alongside the disallow rule on the root domain's own robots.txt and the
+// X-Robots-Tag header set in next.config.ts). Reinstate the allow-list
+// below once /2026 is promoted to the root domain.
 export default function robots(): MetadataRoute.Robots {
   return {
-    rules: [
-      { userAgent: "*", allow: "/" },
-      { userAgent: "GPTBot", allow: "/" },
-      { userAgent: "ChatGPT-User", allow: "/" },
-      { userAgent: "ClaudeBot", allow: "/" },
-      { userAgent: "Claude-Web", allow: "/" },
-      { userAgent: "anthropic-ai", allow: "/" },
-      { userAgent: "PerplexityBot", allow: "/" },
-      { userAgent: "Perplexity-User", allow: "/" },
-      { userAgent: "Google-Extended", allow: "/" },
-      { userAgent: "OAI-SearchBot", allow: "/" },
-      { userAgent: "Applebot-Extended", allow: "/" },
-      { userAgent: "Bytespider", allow: "/" },
-      { userAgent: "CCBot", allow: "/" },
-    ],
+    rules: [{ userAgent: "*", disallow: "/" }],
     sitemap: `${SITE}/sitemap.xml`,
   };
 }
