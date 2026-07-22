@@ -21,8 +21,20 @@ const dmSerif = DM_Serif_Display({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL("https://allankirsten.com"),
   title: "Allan Kirsten's Portfolio 2026",
   description: "Allan Kirsten, product design portfolio.",
+  openGraph: {
+    title: "Allan Kirsten's Portfolio 2026",
+    description: "Allan Kirsten, product design portfolio.",
+    siteName: "Allan Kirsten",
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Allan Kirsten's Portfolio 2026",
+    description: "Allan Kirsten, product design portfolio.",
+  },
 };
 
 export default function RootLayout({
