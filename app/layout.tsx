@@ -7,6 +7,7 @@ import { Footer } from "@/components/Footer";
 import PersonJsonLd from "@/components/PersonJsonLd";
 
 const GA_MEASUREMENT_ID = "G-FSBTENKVS7";
+const SITE = process.env.NEXT_PUBLIC_SITE_URL || "https://allankirsten.com";
 
 const atkinson = Atkinson_Hyperlegible({
   variable: "--font-geist-sans",
@@ -21,7 +22,7 @@ const dmSerif = DM_Serif_Display({
 });
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://allankirsten.com"),
+  metadataBase: new URL(SITE),
   title: "Allan Kirsten's Portfolio 2026",
   description: "Allan Kirsten, product design portfolio.",
   openGraph: {
