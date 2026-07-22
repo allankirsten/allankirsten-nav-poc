@@ -7,10 +7,11 @@ company: Xerpay
 role: "Product Design Lead"
 period: "2020-2022"
 category: "Design & Discovery"
-order: 5
+order: 2
 featured: false
 status: archived
 heroImage: "/images/cases/xerpay-cover.jpg"
+heroImageMobile: "/images/cases/xerpay-cover-mobile.png"
 summary: >
   Product Design Lead numa fintech de antecipação salarial, 45 empresas
   e 60 mil usuários. Transformei o processo de discovery e derrubei o
@@ -31,6 +32,7 @@ sections:
       triplicação de velocidade de validação. Processo de discovery
       documentado do zero.
     visual: "Bloco isolado: ciclo de teste de 1 mês para menos de 1 semana"
+    visualSrc: "/images/cases/xerpay-app-screens.jpg"
   - heading: "Como transformei"
     summary: >
       Mapeei os gargalos, automatizei os fluxos financeiro e legal, criei
@@ -38,12 +40,13 @@ sections:
       assíncrono. Trouxe Opportunity Solution Tree e Double Diamond como
       método.
     visual: "Diagrama do processo de discovery redesenhado"
+    visualSrc: "/images/cases/xerpay-test-cycle.png"
   - heading: "O que entreguei em produto"
     summary: >
       Rebranding do produto, novos fluxos de saque via PIX, e o
       XerpayControle, produto de controle financeiro pessoal, +10% em
       usuários ativos, +45% em billings, -15% em estresse financeiro.
-    visual: "Bloco isolado: +45% em billings via XerpayControle"
+    visualSrc: "/images/cases/xerpay-site-overview.jpg"
   - heading: "Reflexão"
     summary: >
       Usei design pra otimizar o próprio design, o título literal da

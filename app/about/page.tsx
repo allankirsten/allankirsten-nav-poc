@@ -101,6 +101,18 @@ const css = `
     .about-split-image { flex: 1; width: auto; max-width: none; }
     .about-split-image img { height: 100%; object-fit: cover; }
   }
+  .about-placeholder {
+    border: 1px solid #e5e5e5;
+    border-radius: 6px;
+    overflow: hidden;
+    margin: 3rem 0 0;
+    max-width: 66ch;
+  }
+  .about-placeholder img {
+    display: block;
+    width: 100%;
+    height: auto;
+  }
   .about-cross-link {
     padding: clamp(4rem, 8vw, 8rem) var(--section-px);
     display: flex;
@@ -167,17 +179,40 @@ export default function About() {
           <h2 className="about-section-heading">I build businesses with design as the lever.</h2>
           <p className="about-body">
             Ten years in product, twenty-three in the craft: fintechs, SaaS,
-            venture builders, one very intense global team after a merger.
-            Being the first designer in the room has happened more times than
-            I can count, and messy is exactly where the interesting work lives.
+            venture builders, one intense global team after a merger. First
+            designer in the room, more times than I can count.
           </p>
           <p className="about-body">
-            A single week might mean reviewing a screen against usability
-            heuristics, questioning the math behind an A/B test, writing a
-            lifecycle job in code, and sitting in on a sales call. Staying
-            hands-on is deliberate: the distance between an idea and a shipped
-            thing is where most good work quietly dies.
+            A single week might mean usability heuristics on one screen, an
+            A/B test on another, a lifecycle job in code, a sales call.
+            Staying hands-on is deliberate.
           </p>
+        </div>
+      </section>
+
+      <section className="about-section">
+        <span className="about-section-label">Before product</span>
+        <h2 className="about-section-heading">An even longer run in art direction.</h2>
+        <p className="about-body">
+          The other side of that timeline: over a decade as an art director,
+          campaigns, branding, editorial layouts, one client after another
+          across agencies before product ever entered the picture.
+        </p>
+        <p className="about-body">
+          Composition and hierarchy were the job long before they were a
+          design system. That instinct never left, it just moved into
+          product.
+        </p>
+        <div className="about-placeholder">
+          <img
+            src={`${process.env.NEXT_PUBLIC_BASE_PATH ?? ""}/images/art-direction-archive.jpg`}
+            alt="Grid of past art direction work: Ana Maria Braga, Mariner, Kenner, Rede Globo, TIM, Piauí, Itaú Cultural and Grupo Boticário"
+          />
+        </div>
+        <div style={{ marginTop: "1.5rem" }}>
+          <a href={contact.behanceUrl} target="_blank" rel="noopener noreferrer" className="cta-underline cta-underline--light">
+            See more on Behance
+          </a>
         </div>
       </section>
 
@@ -186,16 +221,12 @@ export default function About() {
         <h2 className="about-section-heading">Same curiosity, no badge.</h2>
         <p className="about-body">
           Off the clock, it&apos;s running, diving, or three hours deep into a
-          game that counts as research, I&apos;ll insist. Lately there&apos;s a
-          guitar too, badly played but patiently practiced. Travel is how I
-          get outside my own assumptions, camera always along for it. Running
-          gets tracked the same way everything else does, with entirely too
-          much data.
+          game that counts as research, I&apos;ll insist. There&apos;s a
+          guitar too, badly played.
         </p>
         <p className="about-body">
-          It&apos;s all the same curiosity, really: how people behave, how
-          systems work, how something ordinary becomes something worth
-          paying attention to.
+          Same curiosity, really: how people behave, how systems work, how
+          something ordinary becomes worth paying attention to.
         </p>
         <div style={{ marginTop: "3rem" }}>
           <ImageGallery
@@ -224,8 +255,7 @@ export default function About() {
         <h2 className="about-section-heading">Ink on paper, long before pixels.</h2>
         <p className="about-body">
           Long before roadmaps, there was a 14 year old inking floor plans by
-          hand in an engineering office, and a self-taught programmer figuring
-          out code in 1998. The patience that takes, line by line, is the same
+          hand, and a self-taught programmer figuring out code in 1998. Same
           patience behind a Maserati illustration people still ask me about.
           Different tools, same eye.
         </p>

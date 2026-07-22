@@ -7,7 +7,7 @@ company: Remessa Online
 role: "Product Design Lead to Head of Design"
 period: "2016-2020"
 category: "Design Leadership"
-order: 2
+order: 1
 featured: true
 status: archived
 heroImage: "/images/cases/remessa-online-cover.png"
@@ -48,10 +48,9 @@ sections:
     visualSrcMobile: "/images/cases/remessa-online-decision-mobile.png"
   - heading: "From funnel loss to process"
     summary: >
-      I led the process end to end, journey mapping, problem clustering,
-      prioritization with product and engineering, in-person usability
-      testing. Priority was the transfer-selection screen, now with fewer
-      tickets, less doubt and higher mobile conversion.
+      Journey mapping, problem clustering, in-person usability testing on
+      the transfer-selection screen: fewer tickets, less doubt, higher
+      mobile conversion.
     visual: "Before/after the transfer-selection screen"
     visualSrc: "/images/cases/remessa-online-funnel.jpg"
   - heading: "Role in the exit"
@@ -60,7 +59,6 @@ sections:
       growth from 350 thousand to 1 million customers. Months later, the
       exit to EBANX. Design didn't cause the exit, but a confusing product
       never gets there.
-    visual: "Isolated block: US$229M, EBANX exit"
 ---
 
 # Remessa Online

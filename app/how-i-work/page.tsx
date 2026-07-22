@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect } from "react";
+import { Fragment, useEffect } from "react";
 import gsap from "gsap";
 import { BackButton } from "@/components/BackButton";
 import { howIWorkContent } from "@/content/how-i-work";
@@ -60,6 +60,7 @@ const css = `
     max-width: 80ch;
   }
   .pillar:first-child { padding-top: 0; }
+  .pillar:last-child { border-bottom: none; }
   .pillar-number { font-size: 0.625rem; letter-spacing: 0.2em; text-transform: uppercase; color: #aaa; }
   .pillar-word {
     font-family: var(--font-display);
@@ -92,9 +93,34 @@ const css = `
     letter-spacing: 0.2em;
     text-transform: uppercase;
     color: #aaa;
-    margin-bottom: 3rem;
+    margin-bottom: 1.5rem;
     display: block;
   }
+  .process-intro {
+    font-size: clamp(1.125rem, 2.5vw, 1.5rem);
+    font-weight: 300;
+    line-height: 1.4;
+    color: #222;
+    max-width: 56ch;
+    margin-bottom: clamp(2rem, 4vw, 2.5rem);
+  }
+  .process-loop {
+    font-family: var(--font-display);
+    font-size: clamp(1.5rem, 4vw, 2.5rem);
+    font-weight: 400;
+    color: #9C7B45;
+    letter-spacing: -0.01em;
+    margin-bottom: clamp(3rem, 5vw, 4rem);
+  }
+  .phase-label {
+    font-size: 0.6875rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: #9C7B45;
+    font-weight: 600;
+    margin-top: 2rem;
+  }
+  .phase-label:first-child { margin-top: 0; }
   .process-step {
     display: grid;
     grid-template-columns: 2rem 1fr;
@@ -117,21 +143,16 @@ const css = `
     font-weight: 300;
     color: #888;
     line-height: 1.5;
-    margin-top: 0.25rem;
+    margin-top: 0.625rem;
     max-width: 56ch;
-  }
-  .hiw-footer {
-    border-top: 1px solid #e5e5e5;
-    padding: clamp(3rem, 6vw, 6rem) var(--section-px);
   }
   @media (min-width: 768px) {
     .process-step { grid-template-columns: 4rem 12rem 1fr; }
-    .step-desc { margin-top: 0; }
   }
 `;
 
 export default function HowIWork() {
-  const { tagline, pillars, process, cta } = howIWorkContent;
+  const { tagline, pillars, processIntro, processLoop, process } = howIWorkContent;
 
   useEffect(() => {
     const words = document.querySelectorAll<HTMLElement>(".hiw-title .word");
@@ -183,24 +204,26 @@ export default function HowIWork() {
 
       <section className="hiw-process">
         <span className="process-label">The process</span>
+        <p className="process-intro">{processIntro}</p>
+        <p className="process-loop">{processLoop}</p>
         <div>
-          {process.map((s) => (
-            <div key={s.step} className="process-step">
-              <span className="step-number">{s.step}</span>
-              <div>
-                <p className="step-label">{s.label}</p>
-                <p className="step-desc">{s.desc}</p>
-              </div>
-            </div>
-          ))}
+          {process.map((s, i) => {
+            const newPhase = i === 0 || process[i - 1].phase !== s.phase;
+            return (
+              <Fragment key={s.step}>
+                {newPhase && <p className="phase-label">{s.phase}</p>}
+                <div className="process-step">
+                  <span className="step-number">{s.step}</span>
+                  <div>
+                    <p className="step-label">{s.label}</p>
+                    <p className="step-desc">{s.desc}</p>
+                  </div>
+                </div>
+              </Fragment>
+            );
+          })}
         </div>
       </section>
-
-      <footer className="hiw-footer">
-        <p style={{ fontFamily: "var(--font-display)", fontSize: "clamp(2rem, 5vw, 3.5rem)", lineHeight: 1, fontWeight: 400, color: "#000", maxWidth: "22ch" }}>
-          {cta}
-        </p>
-      </footer>
 
       <BackButton fallback="/" />
     </main>

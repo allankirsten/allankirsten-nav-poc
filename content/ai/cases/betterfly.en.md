@@ -7,7 +7,7 @@ company: Betterfly
 role: "Product Design Lead to Head of Product Design Global"
 period: "2021-2022"
 category: "Design Leadership"
-order: 4
+order: 3
 featured: true
 status: archived
 lang: en
@@ -32,9 +32,9 @@ sections:
     visual: "Isolated block: 35 people, 4 countries, 3 languages"
   - heading: "How I integrated"
     summary: >
-      I mapped each team (skill, maturity, autonomy) and defined the unified
-      structure, leads, UX writers, illustrators, motion, design ops. Then
-      came career paths, multicultural hiring and cross-border rituals.
+      Mapped each team (skill, maturity, autonomy), defined the unified
+      structure, then career paths, multicultural hiring and cross-border
+      rituals.
     visual: "Diagram of the unified post-M&A structure"
   - heading: "Reflection"
     summary: >

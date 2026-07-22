@@ -11,14 +11,14 @@ export const frames: Frame[] = [
   {
     id: "provocacao",
     label: "02",
-    title: "Most designers ship screens. I ship businesses.",
+    title: "Most designers ship screens. I like to ship business.",
     sub: "23 years of proof.",
     bg: "#fff", text: "#000",
   },
   {
     id: "identidade",
     label: "03",
-    title: "Two decades. Two exits. One craft.",
+    title: "Two decades of craft, measured in results.",
     sub: "Design as a multiplier.",
     subHref: "/about",
     cta: "My story",

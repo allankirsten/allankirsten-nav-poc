@@ -38,7 +38,6 @@ export type CaseContent = {
   metrics: CaseMetric[];
   sections: CaseSection[];
   gallery?: { src: string; alt?: string }[]; // photo strip rendered after the sections
-  cta: string;
 };
 
 export type HowIWorkPillar = {
@@ -52,13 +51,15 @@ export type HowIWorkStep = {
   step: string;
   label: string;
   desc: string;
+  phase: "Data" | "Initiative";
 };
 
 export type HowIWorkContent = {
   tagline: string;
   pillars: HowIWorkPillar[];
+  processIntro: string;
+  processLoop: string;
   process: HowIWorkStep[];
-  cta: string;
 };
 
 export type Testimonial = {

@@ -7,7 +7,7 @@ company: Betterfly
 role: "Product Design Lead → Head of Product Design Global"
 period: "2021-2022"
 category: "Design Leadership"
-order: 4
+order: 3
 featured: true
 status: archived
 summary: >

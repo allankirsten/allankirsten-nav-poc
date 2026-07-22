@@ -12,7 +12,7 @@ const NAV_LINKS = [
   { label: "Work", href: "/#work" },
   { label: "Method", href: "/how-i-work" },
   { label: "About", href: "/about" },
-  { label: "Contact", href: "mailto:allankirsten@gmail.com" },
+  { label: "Contact", href: "/#contato" },
 ];
 
 type BgTheme = "dark" | "light";
@@ -294,7 +294,7 @@ export function Navigation() {
                 alignItems: "baseline",
                 gap: "1rem",
                 padding: "0.6rem 0",
-                borderBottom: `1px solid ${t.border}`,
+                borderBottom: i < NAV_LINKS.length - 1 ? `1px solid ${t.border}` : "none",
                 opacity: 0,
               }}
             >

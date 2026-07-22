@@ -2,16 +2,21 @@
 type: case
 slug: bipa
 title: Bipa
-tagline: "From marketing site to acquisition platform."
+tagline: "Design. From the ground to data driven decisions."
 company: Bipa
-role: "Design Lead (contractor)"
+role: "Design Lead"
 period: "2025-present"
 category: "Product & Growth"
-order: 1
+order: 5
 featured: true
 status: active
-heroImage: "/images/cases/bipa-cartoes-fisicos.jpg"
 lang: en
+heroImage: "/images/cases/bipa-cover.png"
+heroImageMobile: "/images/cases/bipa-cover-mobile.png"
+gallery:
+  - "/images/cases/bipa-gallery-1.png"
+  - "/images/cases/bipa-gallery-2.png"
+  - "/images/cases/bipa-gallery-3.png"
 summary: >
   Bitcoin-native fintech, 300 thousand users. I turned a marketing site
   into an acquisition platform: 93 pull requests in 4 months, web signup with
@@ -33,37 +38,36 @@ sections:
       93 pull requests merged in 4 months. Web signup converting 2.3x more
       than the old flow. GEO live before any competitor. A site that only
       existed now acquires.
-    visual: "Isolated block: 93 PRs in 4 months"
+    visual: "Bipa web signup: landing and account creation form"
+    visualSrc: "/images/cases/bipa-impact.png"
   - heading: "The decision that mattered most"
     summary: >
-      The assumption was to send the lead to the app. We tested it, web
-      signup converted 29.9%, against 12.8% for the app. I built the
-      complete 9-step flow from scratch and changed the call, organic stays
-      on web, paid stays in the app.
-    visual: "Isolated block: 29.9% organic vs 12.8% paid"
+      The assumption was to send the lead to the app. I designed a 9-step
+      web signup flow from scratch to test it: 29.9% approval against
+      12.8% for the app, 2.3x, proof that the design decision beat the
+      assumption. Organic stays on web, paid stays in the app.
+    visual: "Bipa app home screen, light and dark mode"
+    visualSrc: "/images/cases/bipa-decision.png"
   - heading: "What was invisible"
     summary: >
-      70% of sessions weren't recorded, the QR code pointed to the wrong
-      place, the site was flagged as phishing. I fixed tracking at the root,
-      Ortto with no "source-not-set", GA4 from 4 to 14 key events.
-    visual: "Before/after tracking: 30% to 100% coverage"
-  - heading: "SEO and GEO from scratch"
-    summary: >
-      A blog invisible to Googlebot became server-rendered with 51 indexable
-      articles. Core Web Vitals optimized. And GEO before any of the 10
-      competitors, llms.txt, speakable schema, citable paragraph.
-    visual: "Before/after Core Web Vitals"
+      Sessions untracked, a QR code pointing to the wrong place, the site
+      flagged as phishing, a blog invisible to Googlebot. I fixed tracking
+      at the root, GA4 from 4 to 14 key events, and rebuilt the blog into
+      51 indexable, server-rendered articles, Core Web Vitals optimized,
+      GEO live before all 10 competitors.
+    visual: "Bitcoin purchase flow: amount, confirmation, installments, payment and success"
+    visualSrc: "/images/cases/bipa-invisible.png"
   - heading: "Research as decision infrastructure"
     summary: >
-      40 JTBD interviews conducted in person, synthesized with AI. They
-      became 5 clusters and an ICP defined by real data, now the permanent
-      context of an internal agent used in every team RFC.
-    visual: "Diagram of the 5 JTBD clusters"
+      40 JTBD interviews, synthesized with AI into 5 clusters and an ICP,
+      now permanent context for an internal agent used in every team RFC.
+      We also used the agents to validate journeys and UX writing across
+      screens.
+    visual: "JTBD cluster profile: Short-Term High-Volume Traders"
+    visualSrc: "/images/cases/bipa-research.png"
   - heading: "Result"
     summary: >
-      93 PRs, web signup 2.3x more efficient, tracking from 30% to 100%
-      coverage, research that became permanent decision-making. Work
-      equivalent to a squad of 5 to 6 people, done by one.
+      A squad delivery, done by one.
 ---
 
 # Bipa
@@ -88,7 +92,7 @@ What did we find? An organic user completing signup in the browser: 29.9% approv
 
 Wrong assumptions can kill an opportunity.
 
-I built the complete 9-step flow from scratch, from tax ID to approval, with an A/B test across 9 iterations and a deterministic split by channel. Final decision: organic goes 100% to web signup, paid stays in the app.
+I designed the complete 9-step flow from scratch, from tax ID to approval, with an A/B test across 9 iterations and a deterministic split by channel. Final decision: organic goes 100% to web signup, paid stays in the app, proof that the design decision beat the assumption.
 
 ## What was invisible
 

@@ -597,7 +597,7 @@ export default function Home() {
                   href={frame.subHref}
                   onClick={saveScroll}
                   className={`frame-cta cta-underline${frame.text === "#000" ? " cta-underline--light" : ""}`}
-                  style={{ marginTop: "1.5rem" }}
+                  style={{ marginTop: "clamp(2.5rem, 6vw, 4rem)" }}
                 >
                   {frame.cta}
                   <svg width="14" height="14" viewBox="0 0 14 14" fill="none">

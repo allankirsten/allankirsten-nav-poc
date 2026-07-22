@@ -135,6 +135,9 @@ const css = `
     padding: 1.25rem 0;
     border-bottom: 1px solid #000;
   }
+  .color-swatch:last-of-type {
+    border-bottom: none;
+  }
   .color-swatch p:last-child {
     grid-column: 1 / -1;
   }
@@ -171,6 +174,9 @@ const css = `
   }
   .dark-panel .color-swatch {
     border-bottom: 1px solid rgba(245,240,232,0.15);
+  }
+  .dark-panel .color-swatch:last-child {
+    border-bottom: none;
   }
   .cta-base {
     display: inline-flex;

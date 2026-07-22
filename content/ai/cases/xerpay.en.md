@@ -7,10 +7,11 @@ company: Xerpay
 role: "Product Design Lead"
 period: "2020-2022"
 category: "Design & Discovery"
-order: 5
+order: 2
 featured: false
 status: archived
 heroImage: "/images/cases/xerpay-cover.jpg"
+heroImageMobile: "/images/cases/xerpay-cover-mobile.png"
 lang: en
 summary: >
   Product Design Lead at a salary advance fintech, 45 companies and 60
@@ -30,20 +31,19 @@ sections:
       User testing cycle dropped from 1 month to under 1 week, a tripling
       of validation speed. Discovery process documented from scratch.
     visual: "Isolated block: testing cycle from 1 month to under 1 week"
+    visualSrc: "/images/cases/xerpay-app-screens.jpg"
   - heading: "How I transformed it"
     summary: >
-      Mapping the bottlenecks came first, then automating the finance and
-      legal flows, building a base of recurring testers, and migrating the
-      stack to Figma and Maze with async testing. Opportunity Solution Tree
-      and Double Diamond came next, brought in as method to structure the
-      process.
+      Automated finance and legal flows, built a base of recurring testers,
+      moved the stack to Figma and Maze with async testing, and brought in
+      Opportunity Solution Tree and Double Diamond to structure the process.
     visual: "Diagram of the redesigned discovery process"
+    visualSrc: "/images/cases/xerpay-test-cycle.png"
   - heading: "What I shipped in product"
     summary: >
-      Product rebranding, new withdrawal flows via PIX, and XerpayControle,
-      a personal finance product, +10% in active users, +45% in billings,
-      -15% in financial stress.
-    visual: "Isolated block: +45% in billings via XerpayControle"
+      Product rebranding, new PIX withdrawal flows, and XerpayControle:
+      +10% active users, +45% billings, -15% financial stress.
+    visualSrc: "/images/cases/xerpay-site-overview.jpg"
   - heading: "Reflection"
     summary: >
       I used design to optimize design itself, the literal title of the

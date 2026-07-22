@@ -7,7 +7,7 @@ company: Remessa Online
 role: "Product Design Lead → Head of Design"
 period: "2016-2020"
 category: "Design Leadership"
-order: 2
+order: 1
 featured: true
 status: archived
 heroImage: "/images/cases/remessa-online-cover.png"
@@ -58,7 +58,6 @@ sections:
       Era Head of Design quando fechou a parceria com o Nubank, projetando ir
       de 350 mil a 1 milhão de clientes. Meses depois, o exit para o EBANX.
       Design não causou o exit, mas produto confuso não chega lá.
-    visual: "Bloco isolado: US$229M, exit EBANX"
 ---
 
 # Remessa Online

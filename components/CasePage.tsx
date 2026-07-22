@@ -164,13 +164,6 @@ const css = `
     text-transform: uppercase;
     color: #ccc;
   }
-  .case-footer {
-    position: relative;
-    z-index: 2;
-    background: #fff;
-    border-top: 1px solid #e5e5e5;
-    padding: clamp(3rem, 6vw, 6rem) var(--section-px);
-  }
   .case-crosslinks {
     position: relative;
     z-index: 2;
@@ -223,7 +216,7 @@ const css = `
 type CaseNav = { prev: CaseNavItem; next: CaseNavItem };
 
 export function CasePage({ content, nav }: { content: CaseContent; nav?: CaseNav }) {
-  const { hero, heroImage, heroImageMobile, metrics, sections, gallery, cta } = content;
+  const { hero, heroImage, heroImageMobile, metrics, sections, gallery } = content;
 
   useLayoutEffect(() => {
     window.scrollTo(0, 0);
@@ -351,12 +344,6 @@ export function CasePage({ content, nav }: { content: CaseContent; nav?: CaseNav
           </Link>
         </nav>
       ) : null}
-
-      <footer className="case-footer">
-        <p style={{ fontFamily: "var(--font-display)", fontSize: "clamp(2rem, 5vw, 3.5rem)", lineHeight: 1, fontWeight: 400, color: "#000", maxWidth: "20ch" }}>
-          {cta}
-        </p>
-      </footer>
 
       <BackButton fallback="/" forceFallback />
     </main>

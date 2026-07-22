@@ -1,16 +1,14 @@
 import { getCase, getCases, type Doc } from "@/lib/content";
 import type { CaseContent } from "@/content/types";
 
-const DEFAULT_CTA = "Got a product that needs this kind of work?";
 const DEFAULT_LANG = "en";
 
 /** Cases with a page on the human site, single source of truth (also used by app/sitemap.ts). */
 export const HUMAN_CASE_SLUGS = [
   "remessa-online",
-  "easy-carros",
-  "betterfly",
   "xerpay",
   "foodastic",
+  "bipa",
 ];
 
 /**
@@ -44,7 +42,6 @@ function toCaseContent(doc: Doc): CaseContent {
       visualSrcMobile: s.visualSrcMobile,
     })),
     gallery: (doc.gallery ?? []).map((src) => ({ src })),
-    cta: DEFAULT_CTA,
   };
 }
 
