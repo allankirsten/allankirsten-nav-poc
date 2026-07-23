@@ -11,7 +11,7 @@ export const frames: Frame[] = [
   {
     id: "provocacao",
     label: "02",
-    title: "Most designers ship screens. I like to ship business.",
+    title: "Most designers ship screens. I like to ship businesses.",
     sub: "23 years of proof.",
     bg: "#fff", text: "#000",
   },
