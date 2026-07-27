@@ -39,6 +39,11 @@ sections:
       Opportunity Solution Tree and Double Diamond to structure the process.
     visual: "Diagram of the redesigned discovery process"
     visualSrc: "/images/cases/xerpay-test-cycle.png"
+  - heading: "Data became a shared language"
+    summary: >
+      Speed changed discussions with tech from opinion to real data.
+      Findings spread past design, into decision input for marketing,
+      sales and support.
   - heading: "What I shipped in product"
     summary: >
       Product rebranding, new PIX withdrawal flows, and XerpayControle:
@@ -63,9 +68,15 @@ User testing cycle from 1 month to under 1 week. A tripling of validation speed,
 
 ## How I transformed it
 
-Mapping the existing process step by step surfaced the bottlenecks. From there: the testing process documented and standardized, finance and legal flows automated to pay participants, a base of recurring testers built. Atomic Research came in to standardize documentation and insight sharing, and the whole stack moved to Figma and Maze, with async testing and automatic results.
+I mapped the existing process step by step and found the bottlenecks. I documented and standardized the testing process. I automated the finance and legal flows to pay participants. I built a base of recurring testers. I standardized documentation and insight sharing with Atomic Research. And I migrated the stack to Figma and Maze, with async testing and automatic results.
 
 I brought method to the team: Opportunity Solution Tree to map opportunity before solving, System Usability Scores to measure flow effectiveness, and Double Diamond as a formal process separating discovery from delivery.
+
+## Data became a shared language
+
+Speed didn't just change the pace, it changed the nature of the conversations. Discussions with tech stopped revolving around opinion and started revolving around real data. I designed and ran the process, but it was the team, design, product and engineering together, that used that space to align decisions faster and with less friction.
+
+Findings didn't stay locked inside design either. They were shared across the whole company and became decision input for marketing, sales and support.
 
 ## What I shipped in product
 

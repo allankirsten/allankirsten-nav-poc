@@ -41,6 +41,11 @@ sections:
       método.
     visual: "Diagrama do processo de discovery redesenhado"
     visualSrc: "/images/cases/xerpay-test-cycle.png"
+  - heading: "Dado virou linguagem comum"
+    summary: >
+      A velocidade mudou as discussões com tech, de opinião pra dado real.
+      Descobertas passaram do design pra virar base de decisão de
+      marketing, comercial e suporte.
   - heading: "O que entreguei em produto"
     summary: >
       Rebranding do produto, novos fluxos de saque via PIX, e o
@@ -69,6 +74,12 @@ Ciclo de teste com usuário de 1 mês para menos de 1 semana. Uma triplicação 
 Mapeei o processo existente passo a passo e achei os gargalos. Documentei e padronizei o processo de teste. Automatizei os fluxos financeiro e legal pra remunerar participante. Criei base de testers recorrentes. Padronizei documentação e compartilhamento de insight com Atomic Research. E migrei a stack para Figma e Maze, com teste assíncrono e resultado automático.
 
 Trouxe método pro time: Opportunity Solution Tree pra mapear oportunidade antes de solucionar, System Usability Scores pra medir efetividade de fluxo, e Double Diamond como processo formal separando discovery de delivery.
+
+## Dado virou linguagem comum
+
+A velocidade não mudou só o ritmo, mudou a natureza das conversas. As discussões com tech deixaram de girar em torno de opinião e passaram a girar em torno de dado real. Idealizei e geri o processo, mas foi o time, design, produto e tecnologia juntos, que usou esse espaço pra alinhar decisão com mais rapidez e menos atrito.
+
+As descobertas também não ficavam presas ao design. Eram compartilhadas com a empresa toda e viravam base de decisão pra marketing, comercial e suporte.
 
 ## O que entreguei em produto
 
