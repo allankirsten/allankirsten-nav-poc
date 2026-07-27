@@ -8,7 +8,6 @@ export const HUMAN_CASE_SLUGS = [
   "remessa-online",
   "xerpay",
   "foodastic",
-  "bipa",
 ];
 
 /**
