@@ -33,9 +33,9 @@ export function proxy(request: NextRequest, event: NextFetchEvent) {
 // basePath isn't auto-prefixed onto the matcher in this Next.js version (or
 // at least not reliably — confirmed empirically: /api/log-hit itself works
 // fine hit directly, but the proxy never fired on /2026/ai/* in production).
-// Building the matcher from the same env var next.config.ts uses.
-const BASE_PATH = process.env.NEXT_PUBLIC_BASE_PATH || "";
-
+// Has to be a literal here, not built from process.env.NEXT_PUBLIC_BASE_PATH
+// (next.config.ts's source) — Next statically parses `matcher` at build
+// time and rejects anything that isn't a plain string/object literal.
 export const config = {
-  matcher: [`${BASE_PATH}/llms.txt`, `${BASE_PATH}/ai/:path*`],
+  matcher: ["/2026/llms.txt", "/2026/ai/:path*"],
 };
